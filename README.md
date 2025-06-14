@@ -9,13 +9,13 @@ A modular Python system using AI-assisted agents to handle fragmented customer d
 **Responsibilities:**
 
 - Inspect schemas (column names) from various data sources
-- Map inconsistent or legacy field names to unified schema using LLM logic
+- Map inconsistent or legacy field names to unified schema using Gemini LLM logic
 - Save mappings per source for later use by other agents
 - Transform data to match unified schema structure
 
 **Unified Schema Fields:**
 
-- `customer_id`, `first_name`, `last_name`, `full_name`, `dob`, `gender`, `national_id`, `email`, `phone`, `address`, `country`, `updated_at`
+- `customer_id`, `full_name`, `email`, `phone`, `address`, `dob`, `created_at`, `updated_at`
 
 ## Quick Start
 
@@ -78,12 +78,7 @@ Main agent class with key methods:
 
 ### LLMSchemaMapper
 
-AI service for intelligent field mapping:
-
-- **Direct matching:** Exact field name matches
-- **Fuzzy matching:** Substring and similarity analysis
-- **Contextual reasoning:** Uses surrounding fields for context
-- **Confidence scoring:** Assigns reliability scores to mappings
+AI service for intelligent field mapping using Google Gemini API.
 
 ### DataLoader
 
@@ -96,7 +91,7 @@ Utility for loading and working with data:
 
 ## Using Google Gemini API
 
-The system supports AI-powered schema mapping using Google Gemini API.
+The system supports AI-powered schema mapping using Google Gemini API only.
 
 ### Setup Gemini API
 
@@ -119,25 +114,11 @@ The system supports AI-powered schema mapping using Google Gemini API.
    pip install google-generativeai
    ```
 
-4. **Enable Live Mode:**
-   In utils/config.py, set `LLM_CONFIG['mock_mode'] = False`
-
 ## Technical Details
 
 ### AI-Powered Mapping Logic
 
-1. **Direct Match** (Confidence: 0.9)
-   - Exact matches from predefined variations dictionary
-2. **Fuzzy Match** (Confidence: 0.7)
-   - Substring matching and similarity analysis
-3. **Contextual Match** (Confidence: 0.5-0.6)
-   - Infers meaning from surrounding field context
-
-### Confidence Scoring
-
-- **High (≥0.9):** Direct matches, very reliable
-- **Medium (≥0.7):** Fuzzy matches, probably correct
-- **Low (≥0.5):** Contextual matches, may need review
+- The system uses the Gemini LLM to map source fields to the unified schema. All mapping is performed by the LLM, leveraging context and schema definitions.
 
 ## License
 

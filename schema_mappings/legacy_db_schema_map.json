@@ -17,68 +17,60 @@
   "mappings": {
     "cust_id": {
       "unified_field": "customer_id",
-      "confidence": 0.9,
+      "confidence": 0.95,
       "mapping_type": "high"
+    },
+    "last_nm": {
+      "unified_field": "full_name",
+      "confidence": 0.6,
+      "mapping_type": "low"
     },
     "full_nm": {
       "unified_field": "full_name",
-      "confidence": 0.9,
+      "confidence": 0.95,
       "mapping_type": "high"
     },
     "date_of_birth": {
       "unified_field": "dob",
-      "confidence": 0.9,
-      "mapping_type": "high"
-    },
-    "gender": {
-      "unified_field": "gender",
-      "confidence": 0.7,
-      "mapping_type": "medium"
-    },
-    "ssn": {
-      "unified_field": "national_id",
-      "confidence": 0.9,
+      "confidence": 1.0,
       "mapping_type": "high"
     },
     "email": {
       "unified_field": "email",
-      "confidence": 0.7,
-      "mapping_type": "medium"
+      "confidence": 1.0,
+      "mapping_type": "high"
     },
     "telephone": {
       "unified_field": "phone",
-      "confidence": 0.9,
+      "confidence": 1.0,
       "mapping_type": "high"
     },
     "mailing_address": {
       "unified_field": "address",
-      "confidence": 0.9,
-      "mapping_type": "high"
-    },
-    "nation": {
-      "unified_field": "country",
-      "confidence": 0.9,
+      "confidence": 0.95,
       "mapping_type": "high"
     },
     "modified_date": {
       "unified_field": "updated_at",
-      "confidence": 0.9,
+      "confidence": 0.95,
       "mapping_type": "high"
     }
   },
   "unmapped_fields": [
     "first_nm",
-    "last_nm"
+    "gender",
+    "ssn",
+    "nation"
   ],
   "mapping_stats": {
     "total_fields": 12,
-    "mapped_fields": 10,
-    "high_confidence": 8,
-    "medium_confidence": 2,
-    "low_confidence": 0,
-    "success_rate": 0.8333333333333334
+    "mapped_fields": 8,
+    "high_confidence": 7,
+    "medium_confidence": 0,
+    "low_confidence": 1,
+    "success_rate": 0.6666666666666666
   },
-  "generated_at": "2025-06-14T10:13:39.152403",
+  "generated_at": "2025-06-14T17:17:01.717490",
   "agent_version": "1.0.0",
   "unified_schema_version": "1.0.0"
 }

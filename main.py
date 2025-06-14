@@ -57,7 +57,7 @@ def main():
         output_dir.mkdir(exist_ok=True)
         
         for source_name, mapping in mapping_results.items():
-            df = data_loader.load_data(source_name)
+            df = data_loader.load_source_data(source_name)
             if df is not None:
                 unified_df = agent.map_to_unified_schema(df, mapping)
                 output_file = output_dir / f"{source_name}_unified.csv"

@@ -1,61 +1,83 @@
 """
-Configuration module for the customer data integration system.
-Contains unified schema definitions and system settings.
+Configuration settings for the Schema Identification Agent.
 """
 
-# Unified schema definition - target schema that all sources will be mapped to
-UNIFIED_SCHEMA = {
-    'customer_id': 'str',      # Unique customer identifier
-    'first_name': 'str',       # Customer's first name
-    'last_name': 'str',        # Customer's last name  
-    'full_name': 'str',        # Customer's complete name
-    'dob': 'str',              # Date of birth (YYYY-MM-DD format)
-    'gender': 'str',           # Gender (standardized values)
-    'national_id': 'str',      # National ID/SSN/Tax ID
-    'email': 'str',            # Email address
-    'phone': 'str',            # Phone number
-    'address': 'str',          # Physical address
-    'country': 'str',          # Country
-    'updated_at': 'str'        # Last update timestamp
-}
+import os
+from typing import Dict, List
 
-# Directory paths
-DATA_SOURCES_DIR = 'data_sources'
-SCHEMA_MAPPINGS_DIR = 'schema_mappings'
-OUTPUT_DIR = 'output'
-
-# File extensions to process
-SUPPORTED_FILE_TYPES = ['.csv', '.xlsx', '.json']
-
-# LLM Configuration for Gemini API
+# LLM Configuration
 LLM_CONFIG = {
-    'model': 'gemini-1.5-flash',  # Gemini model to use
-    'api_key': None,  # Set via environment variable GOOGLE_API_KEY
-    'mock_mode': False,  # Set to True to use mock implementation
-    'temperature': 0.1,  # Low temperature for consistent schema mapping
-    'max_tokens': 1000,  # Maximum tokens for response
-    'timeout': 30  # API timeout in seconds
+    'model': 'gemini-1.5-pro',  # Updated model name for Gemini API
+    'api_key': os.getenv('GOOGLE_API_KEY'),  # API key from environment variable
+    'temperature': 0.3,  # Lower temperature for more consistent outputs
+    'max_tokens': 1024,  # Maximum tokens in response
+    'timeout': 30,  # API call timeout in seconds
 }
 
-# Schema mapping confidence thresholds
-CONFIDENCE_THRESHOLDS = {
-    'high': 0.9,     # Direct match or very confident mapping
-    'medium': 0.7,   # Probable match but may need review
-    'low': 0.5       # Uncertain mapping, requires manual review
+# Unified Schema Definition
+UNIFIED_SCHEMA = {
+    'customer_id': {
+        'type': 'string',
+        'description': 'Unique identifier for the customer',
+        'required': True
+    },
+    'full_name': {
+        'type': 'string',
+        'description': 'Customer\'s full name',
+        'required': True
+    },
+    'email': {
+        'type': 'string',
+        'description': 'Customer\'s email address',
+        'required': True
+    },
+    'phone': {
+        'type': 'string',
+        'description': 'Customer\'s phone number',
+        'required': False
+    },
+    'address': {
+        'type': 'string',
+        'description': 'Customer\'s full address',
+        'required': False
+    },
+    'dob': {
+        'type': 'date',
+        'description': 'Customer\'s date of birth',
+        'required': False
+    },
+    'created_at': {
+        'type': 'datetime',
+        'description': 'Record creation timestamp',
+        'required': True
+    },
+    'updated_at': {
+        'type': 'datetime',
+        'description': 'Record last update timestamp',
+        'required': True
+    }
 }
 
-# Common field name variations for fuzzy matching
-FIELD_VARIATIONS = {
-    'customer_id': ['cust_id', 'client_id', 'user_id', 'emp_id', 'id', 'customer_number'],
-    'first_name': ['fname', 'f_name', 'given_name', 'firstname'],
-    'last_name': ['lname', 'l_name', 'family_name', 'surname', 'lastname'],
-    'full_name': ['full_nm', 'complete_name', 'customer_name', 'employee_name'],
-    'dob': ['birth_dt', 'date_of_birth', 'birthdate', 'birth_date'],
-    'gender': ['sex', 'gender_code'],
-    'national_id': ['id_no', 'ssn', 'tax_id', 'social_security', 'national_identification'],
-    'email': ['email_addr', 'email_address', 'contact_email', 'work_email'],
-    'phone': ['phone_num', 'telephone', 'mobile_phone', 'cell_number', 'phone_number'],
-    'address': ['street_address', 'mailing_address', 'shipping_address', 'home_address', 'residential_address'],
-    'country': ['country_code', 'nation', 'country_name', 'citizenship'],
-    'updated_at': ['last_update', 'modified_date', 'last_modified', 'timestamp', 'record_updated']
+# Data Source Configuration
+DATA_SOURCES = {
+    'csv': {
+        'extensions': ['.csv'],
+        'delimiter': ',',
+        'encoding': 'utf-8'
+    },
+    'json': {
+        'extensions': ['.json'],
+        'encoding': 'utf-8'
+    },
+    'excel': {
+        'extensions': ['.xlsx', '.xls'],
+        'sheet_name': 0
+    }
+}
+
+# Logging Configuration
+LOGGING_CONFIG = {
+    'level': 'INFO',
+    'format': '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    'datefmt': '%Y-%m-%d %H:%M:%S'
 } 

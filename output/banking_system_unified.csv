@@ -1,6 +1,6 @@
-customer_id,first_name,last_name,full_name,dob,gender,national_id,email,phone,address,country,updated_at
-BANK001,Leonardo,DiCaprio,Leonardo DiCaprio,1974-11-11,Male,667788990,leonardo.dicaprio@bank.com,+1(555)501-0001,369 Wolf St,USA,2023-12-03 08:30:00
-BANK002,Kate,Winslet,Kate Winslet,1975-10-05,Female,778899001,kate.winslet@bank.com,+1(555)501-0002,147 Titanic Ave,USA,2023-12-03 10:15:00
-BANK003,Matthew,McConaughey,Matthew McConaughey,1969-11-04,Male,889900112,matthew.mcconaughey@bank.com,+1(555)501-0003,258 Alright Blvd,USA,2023-12-03 12:45:00
-BANK004,Margot,Robbie,Margot Robbie,1990-07-02,Female,990011223,margot.robbie@bank.com,+1(555)501-0004,456 Barbie Dr,USA,2023-12-03 14:20:00
-BANK005,Christian,Bale,Christian Bale,1974-01-30,Male,101112334,christian.bale@bank.com,+1(555)501-0005,789 Batman Rd,USA,2023-12-03 16:00:00 
+customer_id,full_name,full_name,full_name,email,phone,address,dob,created_at,updated_at
+BANK001,Leonardo,DiCaprio,Leonardo DiCaprio,leonardo.dicaprio@bank.com,+1(555)501-0001,369 Wolf St,1974-11-11,,2023-12-03 08:30:00
+BANK002,Kate,Winslet,Kate Winslet,kate.winslet@bank.com,+1(555)501-0002,147 Titanic Ave,1975-10-05,,2023-12-03 10:15:00
+BANK003,Matthew,McConaughey,Matthew McConaughey,matthew.mcconaughey@bank.com,+1(555)501-0003,258 Alright Blvd,1969-11-04,,2023-12-03 12:45:00
+BANK004,Margot,Robbie,Margot Robbie,margot.robbie@bank.com,+1(555)501-0004,456 Barbie Dr,1990-07-02,,2023-12-03 14:20:00
+BANK005,Christian,Bale,Christian Bale,christian.bale@bank.com,+1(555)501-0005,789 Batman Rd,1974-01-30,,2023-12-03 16:00:00 

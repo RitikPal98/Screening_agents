@@ -10,7 +10,9 @@ import logging
 from typing import Dict, List, Optional, Union
 from pathlib import Path
 
-from utils.config import DATA_SOURCES_DIR, SUPPORTED_FILE_TYPES
+# Define defaults here since they are no longer in config
+DATA_SOURCES_DIR = "data_sources"
+SUPPORTED_FILE_TYPES = [".csv", ".xlsx", ".json"]
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)

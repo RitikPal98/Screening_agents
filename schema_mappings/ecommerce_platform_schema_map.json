@@ -16,70 +16,59 @@
   "mappings": {
     "user_id": {
       "unified_field": "customer_id",
-      "confidence": 0.9,
-      "mapping_type": "high"
-    },
-    "given_name": {
-      "unified_field": "first_name",
-      "confidence": 0.9,
+      "confidence": 0.95,
       "mapping_type": "high"
     },
     "family_name": {
-      "unified_field": "last_name",
-      "confidence": 0.9,
-      "mapping_type": "high"
+      "unified_field": "full_name",
+      "confidence": 0.5,
+      "mapping_type": "low"
     },
     "birthdate": {
       "unified_field": "dob",
-      "confidence": 0.9,
-      "mapping_type": "high"
-    },
-    "sex": {
-      "unified_field": "gender",
-      "confidence": 0.9,
-      "mapping_type": "high"
-    },
-    "national_identification": {
-      "unified_field": "national_id",
-      "confidence": 0.9,
+      "confidence": 1.0,
       "mapping_type": "high"
     },
     "contact_email": {
       "unified_field": "email",
-      "confidence": 0.9,
+      "confidence": 1.0,
       "mapping_type": "high"
     },
     "mobile_phone": {
       "unified_field": "phone",
-      "confidence": 0.9,
+      "confidence": 0.95,
       "mapping_type": "high"
     },
     "shipping_address": {
       "unified_field": "address",
-      "confidence": 0.9,
+      "confidence": 0.95,
       "mapping_type": "high"
     },
     "country": {
-      "unified_field": "country",
-      "confidence": 0.7,
+      "unified_field": "address",
+      "confidence": 0.85,
       "mapping_type": "medium"
     },
     "timestamp": {
-      "unified_field": "updated_at",
-      "confidence": 0.9,
-      "mapping_type": "high"
+      "unified_field": "created_at",
+      "confidence": 0.6,
+      "mapping_type": "low"
     }
   },
-  "unmapped_fields": [],
+  "unmapped_fields": [
+    "given_name",
+    "sex",
+    "national_identification"
+  ],
   "mapping_stats": {
     "total_fields": 11,
-    "mapped_fields": 11,
-    "high_confidence": 10,
+    "mapped_fields": 8,
+    "high_confidence": 5,
     "medium_confidence": 1,
-    "low_confidence": 0,
-    "success_rate": 1.0
+    "low_confidence": 2,
+    "success_rate": 0.7272727272727273
   },
-  "generated_at": "2025-06-14T10:13:18.985354",
+  "generated_at": "2025-06-14T17:16:11.329677",
   "agent_version": "1.0.0",
   "unified_schema_version": "1.0.0"
 }

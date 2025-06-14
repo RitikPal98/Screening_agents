@@ -18,11 +18,13 @@ from datetime import datetime
 from pathlib import Path
 
 # Import our utility modules
-from utils.config import (
-    DATA_SOURCES_DIR, SCHEMA_MAPPINGS_DIR, UNIFIED_SCHEMA, 
-    SUPPORTED_FILE_TYPES
-)
+from utils.config import UNIFIED_SCHEMA
 from utils.llm_service import LLMSchemaMapper
+
+# Define defaults here since they are no longer in config
+DATA_SOURCES_DIR = "data_sources"
+SCHEMA_MAPPINGS_DIR = "schema_mappings"
+SUPPORTED_FILE_TYPES = [".csv", ".xlsx", ".json"]
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -159,7 +161,44 @@ class SchemaIdentificationAgent:
             return None
         
         # Use LLM service to generate mappings
-        mapping_result = self.llm_mapper.generate_schema_mapping(source_fields, source_name)
+        # mapping_result = self.llm_mapper.generate_schema_mapping(source_fields, source_name)
+        # New implementation: iterate over each source field and call map_field_to_unified_schema
+        mappings = {}
+        unmapped_fields = []
+        high_confidence = 0
+        medium_confidence = 0
+        low_confidence = 0
+        for field in source_fields:
+            unified_field, confidence = self.llm_mapper.map_field_to_unified_schema(field, source_fields)
+            if unified_field:
+                mappings[field] = {
+                    "unified_field": unified_field,
+                    "confidence": confidence,
+                    "mapping_type": "high" if confidence >= 0.9 else "medium" if confidence >= 0.7 else "low"
+                }
+                if confidence >= 0.9:
+                    high_confidence += 1
+                elif confidence >= 0.7:
+                    medium_confidence += 1
+                else:
+                    low_confidence += 1
+            else:
+                unmapped_fields.append(field)
+        
+        mapping_result = {
+            "source_name": source_name,
+            "source_fields": source_fields,
+            "mappings": mappings,
+            "unmapped_fields": unmapped_fields,
+            "mapping_stats": {
+                "total_fields": len(source_fields),
+                "mapped_fields": len(mappings),
+                "high_confidence": high_confidence,
+                "medium_confidence": medium_confidence,
+                "low_confidence": low_confidence,
+                "success_rate": len(mappings) / len(source_fields) if source_fields else 0
+            }
+        }
         
         # Add timestamp and version info
         mapping_result['generated_at'] = datetime.now().isoformat()
