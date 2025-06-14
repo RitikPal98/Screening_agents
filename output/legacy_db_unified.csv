@@ -1,0 +1,6 @@
+customer_id,first_name,last_name,full_name,dob,gender,national_id,email,phone,address,country,updated_at
+LEG001,,,Alice Johnson,1983-12-25,Female,555667788,alice.johnson@email.com,555-0201,987 Maple St,USA,2023-11-28 08:00:00
+LEG002,,,David Miller,1991-04-14,Male,444556677,david.miller@email.com,555-0202,246 Birch Ave,USA,2023-11-28 10:30:00
+LEG003,,,Emma Davis,1987-08-03,Female,333445566,emma.davis@email.com,555-0203,135 Spruce Rd,USA,2023-11-28 13:45:00
+LEG004,,,James Wilson,1994-01-11,Male,222334455,james.wilson@email.com,555-0204,579 Willow Dr,USA,2023-11-28 15:20:00
+LEG005,,,Olivia Moore,1981-06-29,Female,111223344,olivia.moore@email.com,555-0205,864 Poplar Ln,USA,2023-11-28 17:10:00 

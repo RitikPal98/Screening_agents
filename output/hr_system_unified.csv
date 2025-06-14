@@ -1,0 +1,6 @@
+customer_id,first_name,last_name,full_name,dob,gender,national_id,email,phone,address,country,updated_at
+HR001,Elizabeth,Turner,Elizabeth Turner,1984-05-20,F,112233445,elizabeth.turner@company.com,555.401.0001,741 Caribbean St,US,2023-11-30 12:00:00
+HR002,William,Sparrow,William Sparrow,1979-11-15,M,223344556,william.sparrow@company.com,555.401.0002,852 Pearl Ave,US,2023-11-30 13:30:00
+HR003,Jack,Bootstrap,Jack Bootstrap,1990-08-07,M,334455667,jack.bootstrap@company.com,555.401.0003,963 Tortuga Rd,US,2023-11-30 15:45:00
+HR004,Barbossa,Hector,Barbossa Hector,1972-04-01,M,445566778,barbossa.hector@company.com,555.401.0004,147 Cursed Dr,US,2023-11-30 17:15:00
+HR005,Angelica,Teach,Angelica Teach,1993-12-12,F,556677889,angelica.teach@company.com,555.401.0005,258 Fountain Ln,US,2023-11-30 19:00:00 

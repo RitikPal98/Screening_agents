@@ -1,0 +1,91 @@
+{
+  "source_name": "hr_system",
+  "source_fields": [
+    "emp_id",
+    "f_name",
+    "l_name",
+    "employee_name",
+    "birth_date",
+    "gender_code",
+    "social_security",
+    "work_email",
+    "cell_number",
+    "home_address",
+    "country_name",
+    "last_modified"
+  ],
+  "mappings": {
+    "emp_id": {
+      "unified_field": "customer_id",
+      "confidence": 0.9,
+      "mapping_type": "high"
+    },
+    "f_name": {
+      "unified_field": "first_name",
+      "confidence": 0.9,
+      "mapping_type": "high"
+    },
+    "l_name": {
+      "unified_field": "last_name",
+      "confidence": 0.9,
+      "mapping_type": "high"
+    },
+    "employee_name": {
+      "unified_field": "full_name",
+      "confidence": 0.9,
+      "mapping_type": "high"
+    },
+    "birth_date": {
+      "unified_field": "dob",
+      "confidence": 0.9,
+      "mapping_type": "high"
+    },
+    "gender_code": {
+      "unified_field": "gender",
+      "confidence": 0.9,
+      "mapping_type": "high"
+    },
+    "social_security": {
+      "unified_field": "national_id",
+      "confidence": 0.9,
+      "mapping_type": "high"
+    },
+    "work_email": {
+      "unified_field": "email",
+      "confidence": 0.9,
+      "mapping_type": "high"
+    },
+    "cell_number": {
+      "unified_field": "phone",
+      "confidence": 0.9,
+      "mapping_type": "high"
+    },
+    "home_address": {
+      "unified_field": "address",
+      "confidence": 0.9,
+      "mapping_type": "high"
+    },
+    "country_name": {
+      "unified_field": "country",
+      "confidence": 0.9,
+      "mapping_type": "high"
+    },
+    "last_modified": {
+      "unified_field": "updated_at",
+      "confidence": 0.9,
+      "mapping_type": "high"
+    }
+  },
+  "unmapped_fields": [],
+  "mapping_stats": {
+    "total_fields": 12,
+    "mapped_fields": 12,
+    "high_confidence": 12,
+    "medium_confidence": 0,
+    "low_confidence": 0,
+    "success_rate": 1.0
+  },
+  "generated_at": "2025-06-14T10:13:29.178441",
+  "agent_version": "1.0.0",
+  "unified_schema_version": "1.0.0"
+}

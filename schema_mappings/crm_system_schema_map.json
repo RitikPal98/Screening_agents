@@ -1,0 +1,85 @@
+{
+  "source_name": "crm_system",
+  "source_fields": [
+    "customer_id",
+    "fname",
+    "lname",
+    "birth_dt",
+    "sex",
+    "id_no",
+    "email_addr",
+    "phone_num",
+    "street_address",
+    "country_code",
+    "last_update"
+  ],
+  "mappings": {
+    "customer_id": {
+      "unified_field": "customer_id",
+      "confidence": 1.0,
+      "mapping_type": "high"
+    },
+    "fname": {
+      "unified_field": "first_name",
+      "confidence": 0.95,
+      "mapping_type": "high"
+    },
+    "lname": {
+      "unified_field": "last_name",
+      "confidence": 0.95,
+      "mapping_type": "high"
+    },
+    "birth_dt": {
+      "unified_field": "dob",
+      "confidence": 0.95,
+      "mapping_type": "high"
+    },
+    "sex": {
+      "unified_field": "gender",
+      "confidence": 0.95,
+      "mapping_type": "high"
+    },
+    "id_no": {
+      "unified_field": "national_id",
+      "confidence": 0.9,
+      "mapping_type": "high"
+    },
+    "email_addr": {
+      "unified_field": "email",
+      "confidence": 0.9,
+      "mapping_type": "high"
+    },
+    "phone_num": {
+      "unified_field": "phone",
+      "confidence": 0.9,
+      "mapping_type": "high"
+    },
+    "street_address": {
+      "unified_field": "address",
+      "confidence": 0.9,
+      "mapping_type": "high"
+    },
+    "country_code": {
+      "unified_field": "country",
+      "confidence": 0.9,
+      "mapping_type": "high"
+    },
+    "last_update": {
+      "unified_field": "updated_at",
+      "confidence": 0.95,
+      "mapping_type": "high"
+    }
+  },
+  "unmapped_fields": [],
+  "mapping_stats": {
+    "total_fields": 11,
+    "mapped_fields": 11,
+    "high_confidence": 11,
+    "medium_confidence": 0,
+    "low_confidence": 0,
+    "success_rate": 1.0
+  },
+  "generated_at": "2025-06-14T10:13:10.401474",
+  "agent_version": "1.0.0",
+  "unified_schema_version": "1.0.0"
+}

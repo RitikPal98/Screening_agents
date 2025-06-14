@@ -1,0 +1,6 @@
+customer_id,fname,lname,birth_dt,sex,id_no,email_addr,phone_num,street_address,country_code,last_update
+CRM001,John,Doe,1985-03-15,M,123456789,john.doe@email.com,+1-555-0101,123 Main St,US,2023-12-01 10:30:00
+CRM002,Jane,Smith,1992-07-22,F,987654321,jane.smith@email.com,+1-555-0102,456 Oak Ave,US,2023-12-01 11:15:00
+CRM003,Michael,Johnson,1978-11-08,M,456789123,michael.j@email.com,+1-555-0103,789 Pine St,US,2023-12-01 09:45:00
+CRM004,Sarah,Williams,1989-05-17,F,321654987,sarah.w@email.com,+1-555-0104,321 Elm Dr,US,2023-12-01 14:20:00
+CRM005,Robert,Brown,1976-09-30,M,159753468,robert.brown@email.com,+1-555-0105,654 Cedar Ln,US,2023-12-01 16:10:00 
