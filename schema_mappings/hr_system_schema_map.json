@@ -15,34 +15,34 @@
     "last_modified"
   ],
   "mappings": {
-    "f_name": {
-      "unified_field": "full_name",
-      "confidence": 0.5,
-      "mapping_type": "low"
-    },
-    "l_name": {
-      "unified_field": "full_name",
-      "confidence": 0.9,
-      "mapping_type": "high"
-    },
     "employee_name": {
       "unified_field": "full_name",
       "confidence": 0.95,
       "mapping_type": "high"
+    },
+    "l_name": {
+      "unified_field": "full_name",
+      "confidence": 0.5,
+      "mapping_type": "low"
     },
     "birth_date": {
       "unified_field": "dob",
       "confidence": 1.0,
       "mapping_type": "high"
     },
-    "work_email": {
-      "unified_field": "email",
-      "confidence": 1.0,
-      "mapping_type": "high"
+    "f_name": {
+      "unified_field": "full_name",
+      "confidence": 0.5,
+      "mapping_type": "low"
     },
     "cell_number": {
       "unified_field": "phone",
       "confidence": 0.95,
+      "mapping_type": "high"
+    },
+    "work_email": {
+      "unified_field": "email",
+      "confidence": 1.0,
       "mapping_type": "high"
     },
     "home_address": {
@@ -69,12 +69,12 @@
   "mapping_stats": {
     "total_fields": 12,
     "mapped_fields": 9,
-    "high_confidence": 7,
+    "high_confidence": 6,
     "medium_confidence": 1,
-    "low_confidence": 1,
+    "low_confidence": 2,
     "success_rate": 0.75
   },
-  "generated_at": "2025-06-14T17:16:36.841723",
+  "generated_at": "2025-06-15T21:37:08.535411",
   "agent_version": "1.0.0",
   "unified_schema_version": "1.0.0"
 }

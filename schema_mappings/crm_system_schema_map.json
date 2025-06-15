@@ -19,11 +19,6 @@
       "confidence": 1.0,
       "mapping_type": "high"
     },
-    "fname": {
-      "unified_field": "full_name",
-      "confidence": 0.4,
-      "mapping_type": "low"
-    },
     "lname": {
       "unified_field": "full_name",
       "confidence": 0.8,
@@ -34,9 +29,14 @@
       "confidence": 1.0,
       "mapping_type": "high"
     },
+    "fname": {
+      "unified_field": "full_name",
+      "confidence": 0.4,
+      "mapping_type": "low"
+    },
     "id_no": {
       "unified_field": "customer_id",
-      "confidence": 0.95,
+      "confidence": 0.9,
       "mapping_type": "high"
     },
     "email_addr": {
@@ -76,7 +76,7 @@
     "low_confidence": 1,
     "success_rate": 0.9090909090909091
   },
-  "generated_at": "2025-06-14T17:15:46.222698",
+  "generated_at": "2025-06-15T21:36:46.671191",
   "agent_version": "1.0.0",
   "unified_schema_version": "1.0.0"
 }

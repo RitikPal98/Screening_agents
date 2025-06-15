@@ -16,6 +16,10 @@ import logging
 from typing import Dict, List, Optional, Tuple
 from datetime import datetime
 from pathlib import Path
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from functools import lru_cache
+import hashlib
+from tqdm import tqdm
 
 # Import our utility modules
 from utils.config import UNIFIED_SCHEMA
@@ -25,6 +29,8 @@ from utils.llm_service import LLMSchemaMapper
 DATA_SOURCES_DIR = "data_sources"
 SCHEMA_MAPPINGS_DIR = "schema_mappings"
 SUPPORTED_FILE_TYPES = [".csv", ".xlsx", ".json"]
+BATCH_SIZE = 1000  # Number of records to process at once
+MAX_WORKERS = 4    # Number of parallel workers
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -37,16 +43,22 @@ class SchemaIdentificationAgent:
     """
     
     def __init__(self, data_sources_dir: str = DATA_SOURCES_DIR, 
-                 schema_mappings_dir: str = SCHEMA_MAPPINGS_DIR):
+                 schema_mappings_dir: str = SCHEMA_MAPPINGS_DIR,
+                 max_workers: int = MAX_WORKERS,
+                 batch_size: int = BATCH_SIZE):
         """
         Initialize the Schema Identification Agent.
         
         Args:
             data_sources_dir (str): Directory containing source data files
             schema_mappings_dir (str): Directory to save schema mapping files
+            max_workers (int): Maximum number of parallel workers
+            batch_size (int): Number of records to process at once
         """
         self.data_sources_dir = data_sources_dir
         self.schema_mappings_dir = schema_mappings_dir
+        self.max_workers = max_workers
+        self.batch_size = batch_size
         self.llm_mapper = LLMSchemaMapper()  # Uses config default
         
         # Ensure directories exist
@@ -56,14 +68,70 @@ class SchemaIdentificationAgent:
         self.discovered_sources = {}
         self.schema_mappings = {}
         
+        # Initialize cache
+        self._init_cache()
+        
         logger.info(f"Schema Identification Agent initialized")
         logger.info(f"Data sources directory: {self.data_sources_dir}")
         logger.info(f"Schema mappings directory: {self.schema_mappings_dir}")
+        logger.info(f"Max workers: {self.max_workers}")
+        logger.info(f"Batch size: {self.batch_size}")
+    
+    def _init_cache(self):
+        """Initialize LRU cache for schema mappings."""
+        self._get_cached_mapping = lru_cache(maxsize=100)(self._get_cached_mapping)
+    
+    def _get_schema_hash(self, schema: List[str]) -> str:
+        """
+        Generate a hash for a schema to use as cache key.
+        
+        Args:
+            schema (List[str]): List of field names
+            
+        Returns:
+            str: MD5 hash of the sorted schema fields
+        """
+        # Sort and join the schema fields to ensure consistent hashing
+        schema_str = '|'.join(sorted(schema))
+        return hashlib.md5(schema_str.encode()).hexdigest()
+    
+    def _get_cached_mapping(self, schema_hash: str) -> Optional[Dict]:
+        """
+        Get cached mapping for a schema hash.
+        
+        Args:
+            schema_hash (str): Hash of the schema
+            
+        Returns:
+            Optional[Dict]: Cached mapping if found, None otherwise
+        """
+        cache_file = Path(self.schema_mappings_dir) / f"cache_{schema_hash}.json"
+        if cache_file.exists():
+            try:
+                with open(cache_file, 'r') as f:
+                    return json.load(f)
+            except Exception as e:
+                logger.warning(f"Failed to read cache file {cache_file}: {str(e)}")
+                return None
+        return None
+    
+    def _save_to_cache(self, schema_hash: str, mapping: Dict):
+        """
+        Save mapping to cache.
+        
+        Args:
+            schema_hash (str): Hash of the schema
+            mapping (Dict): Mapping to cache
+        """
+        cache_file = Path(self.schema_mappings_dir) / f"cache_{schema_hash}.json"
+        try:
+            with open(cache_file, 'w') as f:
+                json.dump(mapping, f)
+        except Exception as e:
+            logger.warning(f"Failed to write cache file {cache_file}: {str(e)}")
     
     def _ensure_directories(self):
-        """
-        Ensure that required directories exist, create them if they don't.
-        """
+        """Ensure that required directories exist, create them if they don't."""
         Path(self.data_sources_dir).mkdir(parents=True, exist_ok=True)
         Path(self.schema_mappings_dir).mkdir(parents=True, exist_ok=True)
         logger.info("Ensured all required directories exist")
@@ -142,6 +210,30 @@ class SchemaIdentificationAgent:
             logger.error(f"Failed to extract schema from {source_name}: {str(e)}")
             return None
     
+    def _process_field_mapping(self, field: str, source_fields: List[str]) -> Tuple[str, Dict]:
+        """
+        Process a single field mapping.
+        
+        Args:
+            field (str): Field name to map
+            source_fields (List[str]): List of all source fields
+            
+        Returns:
+            Tuple[str, Dict]: Field name and its mapping information
+        """
+        try:
+            unified_field, confidence = self.llm_mapper.map_field_to_unified_schema(field, source_fields)
+            if unified_field:
+                return field, {
+                    "unified_field": unified_field,
+                    "confidence": confidence,
+                    "mapping_type": "high" if confidence >= 0.9 else "medium" if confidence >= 0.7 else "low"
+                }
+            return field, None
+        except Exception as e:
+            logger.error(f"Error mapping field {field}: {str(e)}")
+            return field, None
+    
     def generate_schema_mapping(self, source_name: str) -> Optional[Dict]:
         """
         Generate a complete schema mapping for a source using LLM-powered analysis.
@@ -160,59 +252,78 @@ class SchemaIdentificationAgent:
             logger.error(f"Cannot generate mapping - failed to extract schema from {source_name}")
             return None
         
-        # Use LLM service to generate mappings
-        # mapping_result = self.llm_mapper.generate_schema_mapping(source_fields, source_name)
-        # New implementation: iterate over each source field and call map_field_to_unified_schema
-        mappings = {}
-        unmapped_fields = []
-        high_confidence = 0
-        medium_confidence = 0
-        low_confidence = 0
-        for field in source_fields:
-            unified_field, confidence = self.llm_mapper.map_field_to_unified_schema(field, source_fields)
-            if unified_field:
-                mappings[field] = {
-                    "unified_field": unified_field,
-                    "confidence": confidence,
-                    "mapping_type": "high" if confidence >= 0.9 else "medium" if confidence >= 0.7 else "low"
+        try:
+            # Check cache first
+            schema_hash = self._get_schema_hash(source_fields)
+            cached_mapping = self._get_cached_mapping(schema_hash)
+            if cached_mapping:
+                logger.info(f"Using cached mapping for {source_name}")
+                return cached_mapping
+            
+            # Process fields in parallel
+            mappings = {}
+            unmapped_fields = []
+            high_confidence = 0
+            medium_confidence = 0
+            low_confidence = 0
+            
+            with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
+                future_to_field = {
+                    executor.submit(self._process_field_mapping, field, source_fields): field 
+                    for field in source_fields
                 }
-                if confidence >= 0.9:
-                    high_confidence += 1
-                elif confidence >= 0.7:
-                    medium_confidence += 1
-                else:
-                    low_confidence += 1
-            else:
-                unmapped_fields.append(field)
-        
-        mapping_result = {
-            "source_name": source_name,
-            "source_fields": source_fields,
-            "mappings": mappings,
-            "unmapped_fields": unmapped_fields,
-            "mapping_stats": {
-                "total_fields": len(source_fields),
-                "mapped_fields": len(mappings),
-                "high_confidence": high_confidence,
-                "medium_confidence": medium_confidence,
-                "low_confidence": low_confidence,
-                "success_rate": len(mappings) / len(source_fields) if source_fields else 0
+                
+                for future in tqdm(as_completed(future_to_field), total=len(source_fields), desc="Mapping fields"):
+                    field = future_to_field[future]
+                    try:
+                        field, mapping = future.result()
+                        if mapping:
+                            mappings[field] = mapping
+                            if mapping["mapping_type"] == "high":
+                                high_confidence += 1
+                            elif mapping["mapping_type"] == "medium":
+                                medium_confidence += 1
+                            else:
+                                low_confidence += 1
+                        else:
+                            unmapped_fields.append(field)
+                    except Exception as e:
+                        logger.error(f"Error processing field {field}: {str(e)}")
+                        unmapped_fields.append(field)
+            
+            mapping_result = {
+                "source_name": source_name,
+                "source_fields": source_fields,
+                "mappings": mappings,
+                "unmapped_fields": unmapped_fields,
+                "mapping_stats": {
+                    "total_fields": len(source_fields),
+                    "mapped_fields": len(mappings),
+                    "high_confidence": high_confidence,
+                    "medium_confidence": medium_confidence,
+                    "low_confidence": low_confidence,
+                    "success_rate": len(mappings) / len(source_fields) if source_fields else 0
+                }
             }
-        }
-        
-        # Add timestamp and version info
-        mapping_result['generated_at'] = datetime.now().isoformat()
-        mapping_result['agent_version'] = '1.0.0'
-        mapping_result['unified_schema_version'] = '1.0.0'
-        
-        # Store in memory
-        self.schema_mappings[source_name] = mapping_result
-        
-        logger.info(f"Generated mapping for {source_name}: "
-                   f"{mapping_result['mapping_stats']['mapped_fields']}/{mapping_result['mapping_stats']['total_fields']} "
-                   f"fields mapped ({mapping_result['mapping_stats']['success_rate']:.1%} success rate)")
-        
-        return mapping_result
+            
+            # Add timestamp and version info
+            mapping_result['generated_at'] = datetime.now().isoformat()
+            mapping_result['agent_version'] = '1.0.0'
+            mapping_result['unified_schema_version'] = '1.0.0'
+            
+            # Store in memory and cache
+            self.schema_mappings[source_name] = mapping_result
+            self._save_to_cache(schema_hash, mapping_result)
+            
+            logger.info(f"Generated mapping for {source_name}: "
+                       f"{mapping_result['mapping_stats']['mapped_fields']}/{mapping_result['mapping_stats']['total_fields']} "
+                       f"fields mapped ({mapping_result['mapping_stats']['success_rate']:.1%} success rate)")
+            
+            return mapping_result
+            
+        except Exception as e:
+            logger.error(f"Failed to generate mapping for {source_name}: {str(e)}")
+            return None
     
     def save_schema_mapping(self, source_name: str, mapping: Optional[Dict] = None) -> bool:
         """
@@ -336,23 +447,20 @@ class SchemaIdentificationAgent:
         discovered = self.discover_data_sources()
         results = {}
         
-        # Process each discovered source
-        for source_name in discovered.keys():
-            logger.info(f"Processing source: {source_name}")
+        # Process sources in parallel
+        with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
+            future_to_source = {
+                executor.submit(self._process_single_source, source_name): source_name 
+                for source_name in discovered.keys()
+            }
             
-            try:
-                # Generate mapping
-                mapping = self.generate_schema_mapping(source_name)
-                if mapping:
-                    # Save mapping
-                    save_success = self.save_schema_mapping(source_name, mapping)
-                    results[source_name] = save_success
-                else:
+            for future in tqdm(as_completed(future_to_source), total=len(discovered), desc="Processing sources"):
+                source_name = future_to_source[future]
+                try:
+                    results[source_name] = future.result()
+                except Exception as e:
+                    logger.error(f"Failed to process source {source_name}: {str(e)}")
                     results[source_name] = False
-                    
-            except Exception as e:
-                logger.error(f"Failed to process source {source_name}: {str(e)}")
-                results[source_name] = False
         
         # Log summary
         successful = sum(1 for success in results.values() if success)
@@ -360,6 +468,27 @@ class SchemaIdentificationAgent:
         logger.info(f"Processing complete: {successful}/{total} sources processed successfully")
         
         return results
+    
+    def _process_single_source(self, source_name: str) -> bool:
+        """
+        Process a single source file.
+        
+        Args:
+            source_name (str): Name of the source to process
+            
+        Returns:
+            bool: True if processing successful, False otherwise
+        """
+        try:
+            # Generate mapping
+            mapping = self.generate_schema_mapping(source_name)
+            if mapping:
+                # Save mapping
+                return self.save_schema_mapping(source_name, mapping)
+            return False
+        except Exception as e:
+            logger.error(f"Failed to process source {source_name}: {str(e)}")
+            return False
     
     def get_mapping_summary(self) -> Dict[str, Dict]:
         """

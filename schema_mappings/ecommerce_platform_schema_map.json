@@ -19,15 +19,15 @@
       "confidence": 0.95,
       "mapping_type": "high"
     },
-    "family_name": {
-      "unified_field": "full_name",
-      "confidence": 0.5,
-      "mapping_type": "low"
-    },
     "birthdate": {
       "unified_field": "dob",
       "confidence": 1.0,
       "mapping_type": "high"
+    },
+    "family_name": {
+      "unified_field": "full_name",
+      "confidence": 0.5,
+      "mapping_type": "low"
     },
     "contact_email": {
       "unified_field": "email",
@@ -68,7 +68,7 @@
     "low_confidence": 2,
     "success_rate": 0.7272727272727273
   },
-  "generated_at": "2025-06-14T17:16:11.329677",
+  "generated_at": "2025-06-15T21:36:57.477929",
   "agent_version": "1.0.0",
   "unified_schema_version": "1.0.0"
 }

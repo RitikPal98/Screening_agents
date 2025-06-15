@@ -20,20 +20,20 @@
       "confidence": 0.95,
       "mapping_type": "high"
     },
-    "firstname": {
+    "fullname": {
       "unified_field": "full_name",
-      "confidence": 0.6,
-      "mapping_type": "low"
+      "confidence": 0.95,
+      "mapping_type": "high"
     },
     "surname": {
       "unified_field": "full_name",
       "confidence": 0.6,
       "mapping_type": "low"
     },
-    "fullname": {
+    "firstname": {
       "unified_field": "full_name",
-      "confidence": 0.95,
-      "mapping_type": "high"
+      "confidence": 0.6,
+      "mapping_type": "low"
     },
     "dob": {
       "unified_field": "dob",
@@ -74,7 +74,7 @@
     "low_confidence": 2,
     "success_rate": 0.75
   },
-  "generated_at": "2025-06-14T17:15:22.419116",
+  "generated_at": "2025-06-15T21:36:35.647910",
   "agent_version": "1.0.0",
   "unified_schema_version": "1.0.0"
 }

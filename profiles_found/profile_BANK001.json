@@ -1,0 +1,27 @@
+{
+  "customer_id": "BANK001",
+  "full_name": "Leonardo",
+  "full_name.1": "DiCaprio",
+  "full_name.2": "Leonardo DiCaprio",
+  "email": "leonardo.dicaprio@bank.com",
+  "phone": "+1(555)501-0001",
+  "address": "369 Wolf St",
+  "dob": "1974-11-11",
+  "created_at": "",
+  "updated_at": "2023-12-03 08:30:00",
+  "sources": [
+    "banking_system",
+    "crm_system",
+    "ecommerce_platform",
+    "legacy_db"
+  ],
+  "match_count": 8,
+  "match_quality": {
+    "is_strong_match": false,
+    "overall_score": 100.0,
+    "field_scores": {
+      "national_id": 100.0
+    }
+  },
+  "merged_at": "2025-06-16T01:40:59.628959"
+}
