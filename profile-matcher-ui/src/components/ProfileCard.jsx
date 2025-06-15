@@ -90,31 +90,50 @@ const ProfileCard = ({ profile, metadata }) => {
   const isStrongMatch = metadata?.match_quality?.is_strong_match || false;
 
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden">
+    <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-4">
+      <div className="bg-gradient-to-r from-[#401664] to-purple-600 px-8 py-6">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-xl font-bold text-white">Customer Profile</h2>
-            <p className="text-blue-100 text-sm">
+            <div className="flex items-center mb-2">
+              <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center mr-4">
+                <svg
+                  className="w-5 h-5 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                  />
+                </svg>
+              </div>
+              <h2 className="text-2xl font-bold text-white">
+                Customer Profile
+              </h2>
+            </div>
+            <p className="text-purple-100 text-lg">
               Matched from {profile.sources?.length || 0} source(s)
             </p>
           </div>
           <div className="text-right">
-            <div className="flex items-center space-x-2">
-              <div className="w-20 bg-blue-800 rounded-full h-3">
+            <div className="flex items-center space-x-3 mb-2">
+              <div className="w-24 bg-white/20 rounded-full h-4">
                 <div
-                  className={`h-3 rounded-full ${getConfidenceColor(
+                  className={`h-4 rounded-full ${getConfidenceColor(
                     overallScore
                   )}`}
                   style={{ width: `${Math.min(overallScore, 100)}%` }}
                 ></div>
               </div>
-              <span className="text-white text-sm font-medium">
+              <span className="text-white text-lg font-bold">
                 {Math.round(overallScore)}%
               </span>
             </div>
-            <p className="text-blue-100 text-xs mt-1">
+            <p className="text-purple-100 text-sm font-medium">
               {getConfidenceText(overallScore)} Confidence
             </p>
           </div>
@@ -123,23 +142,25 @@ const ProfileCard = ({ profile, metadata }) => {
 
       {/* Match Quality Badge */}
       {isStrongMatch && (
-        <div className="bg-green-50 border-l-4 border-green-400 p-4">
+        <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-l-4 border-green-400 p-6">
           <div className="flex">
             <div className="flex-shrink-0">
-              <svg
-                className="h-5 w-5 text-green-400"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                  clipRule="evenodd"
-                />
-              </svg>
+              <div className="w-8 h-8 bg-green-400 rounded-lg flex items-center justify-center">
+                <svg
+                  className="h-4 w-4 text-white"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </div>
             </div>
-            <div className="ml-3">
-              <p className="text-sm text-green-700">
+            <div className="ml-4">
+              <p className="text-green-800 font-medium">
                 <strong>Strong Match:</strong> High confidence match based on
                 multiple attributes
               </p>
@@ -149,8 +170,8 @@ const ProfileCard = ({ profile, metadata }) => {
       )}
 
       {/* Profile Details */}
-      <div className="p-6">
-        <dl className="divide-y divide-gray-200">
+      <div className="p-8">
+        <dl className="divide-y divide-gray-100">
           {renderField("Full Name", profile.full_name, "full_name")}
           {renderField("Date of Birth", profile.dob, "dob")}
           {renderField("National ID", profile.national_id, "national_id")}
@@ -187,16 +208,46 @@ const ProfileCard = ({ profile, metadata }) => {
 
       {/* Source Information */}
       {profile.sources && profile.sources.length > 0 && (
-        <div className="bg-gray-50 px-6 py-4 border-t border-gray-200">
-          <h3 className="text-sm font-medium text-gray-900 mb-3">
-            Data Sources
-          </h3>
-          <div className="flex flex-wrap gap-2">
+        <div className="bg-gradient-to-r from-gray-50 to-gray-100 px-8 py-6 border-t border-gray-200">
+          <div className="flex items-center mb-4">
+            <div className="w-6 h-6 bg-[#401664] rounded-lg flex items-center justify-center mr-3">
+              <svg
+                className="w-3 h-3 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"
+                />
+              </svg>
+            </div>
+            <h3 className="text-lg font-semibold text-gray-900">
+              Data Sources
+            </h3>
+          </div>
+          <div className="flex flex-wrap gap-3">
             {profile.sources.map((source, index) => (
               <span
                 key={index}
-                className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+                className="inline-flex items-center px-4 py-2 rounded-xl text-sm font-medium bg-gradient-to-r from-[#401664] to-purple-600 text-white shadow-sm"
               >
+                <svg
+                  className="w-3 h-3 mr-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
                 {source
                   .replace(/_/g, " ")
                   .replace(/\b\w/g, (l) => l.toUpperCase())}

@@ -45,15 +45,34 @@ const MatchDetails = ({ metadata, query }) => {
   };
 
   const renderQueryInfo = () => (
-    <div className="bg-blue-50 rounded-lg p-4">
-      <h4 className="text-sm font-medium text-blue-900 mb-2">Search Query</h4>
-      <dl className="grid grid-cols-1 gap-2">
+    <div className="bg-gradient-to-r from-[#401664]/5 to-purple-50 border border-[#401664]/20 rounded-xl p-6">
+      <div className="flex items-center mb-4">
+        <div className="w-6 h-6 bg-[#401664] rounded-lg flex items-center justify-center mr-3">
+          <svg
+            className="w-3 h-3 text-white"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            />
+          </svg>
+        </div>
+        <h4 className="text-lg font-semibold text-[#401664]">Search Query</h4>
+      </div>
+      <dl className="grid grid-cols-1 gap-3">
         {Object.entries(query || {}).map(([key, value]) => (
-          <div key={key} className="flex justify-between">
-            <dt className="text-sm text-blue-700 capitalize">
+          <div key={key} className="flex justify-between items-center">
+            <dt className="text-sm text-gray-700 capitalize font-medium">
               {key.replace(/_/g, " ")}:
             </dt>
-            <dd className="text-sm text-blue-900 font-medium">{value}</dd>
+            <dd className="text-sm text-[#401664] font-semibold bg-white px-3 py-1 rounded-lg">
+              {value}
+            </dd>
           </div>
         ))}
       </dl>
@@ -205,32 +224,51 @@ const MatchDetails = ({ metadata, query }) => {
   );
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h3 className="text-lg font-medium text-gray-900">Match Details</h3>
-        <span className="text-sm text-gray-500">
+    <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
+      <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center">
+          <div className="w-8 h-8 bg-gradient-to-br from-[#401664] to-purple-600 rounded-xl flex items-center justify-center mr-4">
+            <svg
+              className="w-4 h-4 text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+              />
+            </svg>
+          </div>
+          <h3 className="text-2xl font-bold text-gray-900">Match Details</h3>
+        </div>
+        <span className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
           {metadata.sources?.length || 0} source(s) matched
         </span>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {renderQueryInfo()}
-        {renderMatchQuality()}
+      <div className="space-y-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {renderQueryInfo()}
+          {renderMatchQuality()}
+        </div>
+
+        {renderSearchMetadata()}
+
+        {/* Additional Debug Information (only in development) */}
+        {process.env.NODE_ENV === "development" && (
+          <details className="bg-gray-50 rounded-lg p-4">
+            <summary className="text-sm font-medium text-gray-700 cursor-pointer">
+              Debug Information (Development Only)
+            </summary>
+            <pre className="mt-2 text-xs text-gray-600 overflow-auto">
+              {JSON.stringify(metadata, null, 2)}
+            </pre>
+          </details>
+        )}
       </div>
-
-      {renderSearchMetadata()}
-
-      {/* Additional Debug Information (only in development) */}
-      {process.env.NODE_ENV === "development" && (
-        <details className="bg-gray-50 rounded-lg p-4">
-          <summary className="text-sm font-medium text-gray-700 cursor-pointer">
-            Debug Information (Development Only)
-          </summary>
-          <pre className="mt-2 text-xs text-gray-600 overflow-auto">
-            {JSON.stringify(metadata, null, 2)}
-          </pre>
-        </details>
-      )}
     </div>
   );
 };
