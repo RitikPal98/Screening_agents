@@ -6,9 +6,12 @@ import React, { useState, useEffect } from "react";
 import QueryForm from "../components/QueryForm";
 import ProfileCard from "../components/ProfileCard";
 import MatchDetails from "../components/MatchDetails";
-// import { matchProfile, getHealthStatus } from "../services/api";
-// Fallback import for testing
-import { matchProfile, getHealthStatus } from "../services/api-fallback";
+import {
+  matchProfile,
+  getHealthStatus,
+  getDataSources,
+  getSchemaMappings,
+} from "../services/api";
 
 const Home = () => {
   const [loading, setLoading] = useState(false);
@@ -16,11 +19,34 @@ const Home = () => {
   const [error, setError] = useState(null);
   const [apiStatus, setApiStatus] = useState("unknown");
   const [lastQuery, setLastQuery] = useState(null);
+  const [dataSources, setDataSources] = useState([]);
+  const [schemaMappings, setSchemaMappings] = useState([]);
+  const [showSystemInfo, setShowSystemInfo] = useState(false);
 
   useEffect(() => {
-    // Check API health on component mount
+    // Check API health and load system info on component mount
     checkApiHealth();
+    loadSystemInfo();
   }, []);
+
+  const loadSystemInfo = async () => {
+    try {
+      const [sourcesResponse, mappingsResponse] = await Promise.all([
+        getDataSources(),
+        getSchemaMappings(),
+      ]);
+
+      if (sourcesResponse.success) {
+        setDataSources(sourcesResponse.sources);
+      }
+
+      if (mappingsResponse.success) {
+        setSchemaMappings(mappingsResponse.mappings);
+      }
+    } catch (error) {
+      console.error("Failed to load system info:", error);
+    }
+  };
 
   const checkApiHealth = async () => {
     try {
@@ -45,7 +71,11 @@ const Home = () => {
 
       if (response.success) {
         setResult(response);
-        if (!response.profile) {
+        if (
+          !response.profile &&
+          (!response.individual_matches ||
+            response.individual_matches.length === 0)
+        ) {
           setError("No matching profile found with the provided criteria.");
         }
       } else {
@@ -250,28 +280,144 @@ const Home = () => {
                 sources
               </p>
             </div>
-            <div className="flex items-center space-x-3 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2">
-              <div
-                className={`w-3 h-3 rounded-full shadow-sm ${
-                  apiStatus === "healthy"
-                    ? "bg-green-400 animate-pulse"
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-3 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2">
+                <div
+                  className={`w-3 h-3 rounded-full shadow-sm ${
+                    apiStatus === "healthy"
+                      ? "bg-green-400 animate-pulse"
+                      : apiStatus === "unhealthy"
+                      ? "bg-red-400"
+                      : "bg-yellow-400"
+                  }`}
+                ></div>
+                <span className="text-sm text-white font-medium">
+                  API{" "}
+                  {apiStatus === "healthy"
+                    ? "Online"
                     : apiStatus === "unhealthy"
-                    ? "bg-red-400"
-                    : "bg-yellow-400"
-                }`}
-              ></div>
-              <span className="text-sm text-white font-medium">
-                API{" "}
-                {apiStatus === "healthy"
-                  ? "Online"
-                  : apiStatus === "unhealthy"
-                  ? "Offline"
-                  : "Checking..."}
-              </span>
+                    ? "Offline"
+                    : "Checking..."}
+                </span>
+              </div>
+              <button
+                onClick={() => setShowSystemInfo(!showSystemInfo)}
+                className="bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 text-sm text-white font-medium hover:bg-white/20 transition-colors"
+              >
+                {showSystemInfo ? "Hide" : "Show"} System Info
+              </button>
             </div>
           </div>
         </div>
       </header>
+
+      {/* System Information Panel */}
+      {showSystemInfo && (
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-200">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {/* Data Sources Info */}
+              <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
+                <div className="flex items-center mb-4">
+                  <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center mr-3">
+                    <svg
+                      className="w-4 h-4 text-white"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M4 7v10c0 2.21 1.79 4 4 4h8c2.21 0 4-1.79 4-4V7c0-2.21-1.79-4-4-4H8c-2.21 0-4 1.79-4 4z"
+                      />
+                    </svg>
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    Data Sources
+                  </h3>
+                  <span className="ml-auto bg-blue-100 text-blue-800 text-sm font-medium px-2.5 py-0.5 rounded-full">
+                    {dataSources.length} sources
+                  </span>
+                </div>
+                <div className="space-y-3 max-h-48 overflow-y-auto">
+                  {dataSources.map((source, index) => (
+                    <div
+                      key={index}
+                      className="flex justify-between items-center p-3 bg-gray-50 rounded-lg"
+                    >
+                      <div>
+                        <div className="font-medium text-gray-900">
+                          {source.name}
+                        </div>
+                        <div className="text-sm text-gray-600">
+                          {source.record_count} records
+                        </div>
+                      </div>
+                      <div className="text-sm text-gray-500">
+                        {source.columns.length} fields
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Schema Mappings Info */}
+              <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
+                <div className="flex items-center mb-4">
+                  <div className="w-8 h-8 bg-purple-500 rounded-lg flex items-center justify-center mr-3">
+                    <svg
+                      className="w-4 h-4 text-white"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                      />
+                    </svg>
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    Schema Mappings
+                  </h3>
+                  <span className="ml-auto bg-purple-100 text-purple-800 text-sm font-medium px-2.5 py-0.5 rounded-full">
+                    AI-Enhanced
+                  </span>
+                </div>
+                <div className="space-y-3 max-h-48 overflow-y-auto">
+                  {schemaMappings.map((mapping, index) => (
+                    <div
+                      key={index}
+                      className="flex justify-between items-center p-3 bg-gray-50 rounded-lg"
+                    >
+                      <div>
+                        <div className="font-medium text-gray-900">
+                          {mapping.source}
+                        </div>
+                        <div className="text-sm text-gray-600">
+                          {mapping.field_count} mapped fields
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-sm font-medium text-purple-600">
+                          {Math.round(mapping.confidence_avg)}% confidence
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          {mapping.unified_fields.length} unified fields
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -302,25 +448,35 @@ const Home = () => {
                   </svg>
                 </div>
                 <h3 className="text-lg font-semibold text-[#401664]">
-                  How to Use
+                  Enhanced AI System
                 </h3>
               </div>
               <ul className="text-gray-700 space-y-2">
                 <li className="flex items-start">
-                  <span className="text-[#401664] mr-2">•</span>
-                  Enter the customer's full name (required)
+                  <span className="text-[#401664] mr-2">🚀</span>
+                  Dynamic schema evolution with{" "}
+                  {schemaMappings.reduce(
+                    (total, mapping) => total + mapping.unified_fields.length,
+                    0
+                  )}{" "}
+                  unified fields
                 </li>
                 <li className="flex items-start">
-                  <span className="text-[#401664] mr-2">•</span>
-                  Add date of birth and/or national ID for better accuracy
+                  <span className="text-[#401664] mr-2">🧠</span>
+                  AI-powered field mapping with Gemini integration
                 </li>
                 <li className="flex items-start">
-                  <span className="text-[#401664] mr-2">•</span>
-                  Click "Search Profile" to find matching records
+                  <span className="text-[#401664] mr-2">📊</span>
+                  Processes both structured and unstructured data
                 </li>
                 <li className="flex items-start">
-                  <span className="text-[#401664] mr-2">•</span>
-                  Use the test cases for quick testing
+                  <span className="text-[#401664] mr-2">⚡</span>
+                  Real-time profile matching across{" "}
+                  {dataSources.reduce(
+                    (total, source) => total + source.record_count,
+                    0
+                  )}{" "}
+                  records
                 </li>
               </ul>
             </div>
@@ -347,15 +503,227 @@ const Home = () => {
 
             {!loading && result && (
               <>
-                <ProfileCard
-                  profile={result.profile}
-                  metadata={result.metadata}
-                />
-
+                {/* Main Merged Profile */}
                 {result.profile && (
+                  <ProfileCard
+                    profile={result.profile}
+                    metadata={result.metadata}
+                    matchSummary={result.match_summary}
+                  />
+                )}
+
+                {/* Individual Matches */}
+                {result.individual_matches &&
+                  result.individual_matches.length > 0 && (
+                    <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
+                      <div className="flex items-center mb-6">
+                        <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center mr-3">
+                          <svg
+                            className="w-4 h-4 text-white"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                            />
+                          </svg>
+                        </div>
+                        <h3 className="text-xl font-bold text-gray-900">
+                          Individual Matches
+                        </h3>
+                        <span className="ml-auto bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full">
+                          {result.individual_matches.length} matches found
+                        </span>
+                      </div>
+
+                      {/* Match Summary */}
+                      {result.match_summary && (
+                        <div className="mb-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
+                          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                            <div>
+                              <div className="text-2xl font-bold text-blue-600">
+                                {result.match_summary.total_matches}
+                              </div>
+                              <div className="text-sm text-gray-600">
+                                Total Matches
+                              </div>
+                            </div>
+                            <div>
+                              <div className="text-2xl font-bold text-purple-600">
+                                {result.match_summary.sources_matched}
+                              </div>
+                              <div className="text-sm text-gray-600">
+                                Sources
+                              </div>
+                            </div>
+                            <div>
+                              <div className="text-2xl font-bold text-green-600">
+                                {Math.round(result.match_summary.highest_score)}
+                                %
+                              </div>
+                              <div className="text-sm text-gray-600">
+                                Best Score
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                className={`text-2xl font-bold ${
+                                  result.match_summary.has_strong_matches
+                                    ? "text-green-600"
+                                    : "text-orange-600"
+                                }`}
+                              >
+                                {result.match_summary.has_strong_matches
+                                  ? "✓"
+                                  : "~"}
+                              </div>
+                              <div className="text-sm text-gray-600">
+                                Strong Match
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      <div className="space-y-4 max-h-96 overflow-y-auto">
+                        {result.individual_matches.map((match, index) => (
+                          <div
+                            key={index}
+                            className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors"
+                          >
+                            <div className="flex justify-between items-start mb-3">
+                              <div className="flex items-center">
+                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 mr-3">
+                                  {match.source_name
+                                    .replace(/_/g, " ")
+                                    .replace(/\b\w/g, (l) => l.toUpperCase())}
+                                </span>
+                                {match.match_info?.is_strong_match && (
+                                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                    <svg
+                                      className="w-3 h-3 mr-1"
+                                      fill="currentColor"
+                                      viewBox="0 0 20 20"
+                                    >
+                                      <path
+                                        fillRule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                        clipRule="evenodd"
+                                      />
+                                    </svg>
+                                    Strong Match
+                                  </span>
+                                )}
+                              </div>
+                              <div className="flex items-center">
+                                <div className="w-16 bg-gray-200 rounded-full h-2 mr-2">
+                                  <div
+                                    className={`h-2 rounded-full ${
+                                      match.match_info?.match_score >= 90
+                                        ? "bg-green-500"
+                                        : match.match_info?.match_score >= 70
+                                        ? "bg-yellow-500"
+                                        : match.match_info?.match_score >= 50
+                                        ? "bg-orange-500"
+                                        : "bg-red-500"
+                                    }`}
+                                    style={{
+                                      width: `${Math.min(
+                                        match.match_info?.match_score || 0,
+                                        100
+                                      )}%`,
+                                    }}
+                                  ></div>
+                                </div>
+                                <span className="text-sm font-medium text-gray-600">
+                                  {Math.round(
+                                    match.match_info?.match_score || 0
+                                  )}
+                                  %
+                                </span>
+                              </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 text-sm">
+                              {match.full_name && (
+                                <div>
+                                  <span className="font-medium text-gray-700">
+                                    Name:
+                                  </span>
+                                  <span className="ml-1 text-gray-900">
+                                    {match.full_name}
+                                  </span>
+                                </div>
+                              )}
+                              {match.dob && (
+                                <div>
+                                  <span className="font-medium text-gray-700">
+                                    DOB:
+                                  </span>
+                                  <span className="ml-1 text-gray-900">
+                                    {match.dob}
+                                  </span>
+                                </div>
+                              )}
+                              {match.national_id && (
+                                <div>
+                                  <span className="font-medium text-gray-700">
+                                    ID:
+                                  </span>
+                                  <span className="ml-1 text-gray-900">
+                                    {match.national_id}
+                                  </span>
+                                </div>
+                              )}
+                              {match.email && (
+                                <div>
+                                  <span className="font-medium text-gray-700">
+                                    Email:
+                                  </span>
+                                  <span className="ml-1 text-gray-900">
+                                    {match.email}
+                                  </span>
+                                </div>
+                              )}
+                              {match.phone && (
+                                <div>
+                                  <span className="font-medium text-gray-700">
+                                    Phone:
+                                  </span>
+                                  <span className="ml-1 text-gray-900">
+                                    {match.phone}
+                                  </span>
+                                </div>
+                              )}
+                              {match.address && (
+                                <div>
+                                  <span className="font-medium text-gray-700">
+                                    Address:
+                                  </span>
+                                  <span className="ml-1 text-gray-900">
+                                    {match.address}
+                                  </span>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                {/* Match Details */}
+                {(result.profile ||
+                  (result.individual_matches &&
+                    result.individual_matches.length > 0)) && (
                   <MatchDetails
                     metadata={result.metadata}
                     query={result.query}
+                    matchSummary={result.match_summary}
                   />
                 )}
               </>
@@ -416,13 +784,27 @@ const Home = () => {
               </h4>
             </div>
             <p className="text-gray-600 mb-2">
-              Powered by AI agents for intelligent schema identification and
-              profile matching
+              Enhanced AI-powered system with dynamic schema evolution and
+              intelligent data processing
             </p>
-            <p className="text-sm text-gray-500">
-              Built with React.js and Flask • Agent-based architecture •
-              Advanced ML algorithms
-            </p>
+            <div className="flex flex-wrap justify-center gap-4 text-sm text-gray-500">
+              <span className="flex items-center">
+                <div className="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
+                {dataSources.length} Data Sources
+              </span>
+              <span className="flex items-center">
+                <div className="w-2 h-2 bg-purple-400 rounded-full mr-2"></div>
+                AI Schema Mapping
+              </span>
+              <span className="flex items-center">
+                <div className="w-2 h-2 bg-blue-400 rounded-full mr-2"></div>
+                Structured & Unstructured Data
+              </span>
+              <span className="flex items-center">
+                <div className="w-2 h-2 bg-orange-400 rounded-full mr-2"></div>
+                Real-time Gemini Integration
+              </span>
+            </div>
           </div>
         </footer>
       </main>

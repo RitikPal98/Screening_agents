@@ -1,0 +1,106 @@
+{
+  "source_name": "banking_system",
+  "field_mappings": {
+    "client_id": {
+      "unified_field": "customer_id",
+      "confidence": 0.95,
+      "timestamp": "2025-06-18T18:10:13.069677"
+    },
+    "firstname": {
+      "unified_field": "first_name",
+      "confidence": 0.95,
+      "timestamp": "2025-06-18T18:10:14.975416"
+    },
+    "surname": {
+      "unified_field": "last_name",
+      "confidence": 1.0,
+      "timestamp": "2025-06-18T18:10:16.563029"
+    },
+    "fullname": {
+      "unified_field": "full_name",
+      "confidence": 1.0,
+      "timestamp": "2025-06-18T18:10:18.555901"
+    },
+    "dob": {
+      "unified_field": "dob",
+      "confidence": 1.0,
+      "timestamp": "2025-06-18T18:10:20.422291"
+    },
+    "tax_id": {
+      "unified_field": "national_id",
+      "confidence": 0.95,
+      "timestamp": "2025-06-18T18:10:26.761579"
+    },
+    "email_address": {
+      "unified_field": "email",
+      "confidence": 1.0,
+      "timestamp": "2025-06-18T18:10:28.429131"
+    },
+    "phone_number": {
+      "unified_field": "phone",
+      "confidence": 1.0,
+      "timestamp": "2025-06-18T18:10:29.757614"
+    },
+    "residential_address": {
+      "unified_field": "address",
+      "confidence": 0.95,
+      "timestamp": "2025-06-18T18:10:31.847349"
+    },
+    "citizenship": {
+      "unified_field": "country",
+      "confidence": 0.95,
+      "timestamp": "2025-06-18T18:10:33.894076"
+    },
+    "record_updated": {
+      "unified_field": "record_updated",
+      "confidence": 0.8,
+      "timestamp": "2025-06-18T18:10:36.535703",
+      "auto_extended": true
+    }
+  },
+  "unmapped_fields": [
+    {
+      "source_field": "sex",
+      "source_name": "banking_system",
+      "confidence": 0.0,
+      "timestamp": "2025-06-18T18:10:22.955919",
+      "context_fields": [
+        "client_id",
+        "firstname",
+        "surname",
+        "fullname",
+        "dob",
+        "sex",
+        "tax_id",
+        "email_address",
+        "phone_number",
+        "residential_address",
+        "citizenship",
+        "record_updated"
+      ]
+    },
+    {
+      "source_field": "record_updated",
+      "source_name": "banking_system",
+      "confidence": 0.0,
+      "timestamp": "2025-06-18T18:10:35.717641",
+      "context_fields": [
+        "client_id",
+        "firstname",
+        "surname",
+        "fullname",
+        "dob",
+        "sex",
+        "tax_id",
+        "email_address",
+        "phone_number",
+        "residential_address",
+        "citizenship",
+        "record_updated"
+      ]
+    }
+  ],
+  "total_fields": 12,
+  "mapped_fields": 11,
+  "mapping_success_rate": 0.9166666666666666
+}

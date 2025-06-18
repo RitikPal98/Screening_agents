@@ -7,7 +7,7 @@ import logging
 import os
 import re
 from typing import Dict, List, Tuple, Optional
-from utils.config import LLM_CONFIG, UNIFIED_SCHEMA
+from utils.config import LLM_CONFIG
 
 # Import dependencies
 try:
@@ -137,7 +137,7 @@ class LLMSchemaMapper:
         Other fields in the same source (context): {source_context}
         
         Unified schema fields available:
-        {list(UNIFIED_SCHEMA.keys())}
+        ["customer_id", "first_name", "last_name", "full_name", "dob", "email", "phone", "address", "national_id", "country", "source_name", "raw_text"]
         
         Please respond with:
         1. The best matching unified field name (or "None" if no good match)
@@ -170,9 +170,9 @@ class LLMSchemaMapper:
                 unified_field = parsed.get('unified_field')
                 confidence = float(parsed.get('confidence', 0.0))
                 
-                # Validate unified field name
-                if unified_field and unified_field not in UNIFIED_SCHEMA.keys() and unified_field.lower() != 'none':
-                    logger.warning(f"LLM returned invalid unified field: {unified_field}")
+                # Validate unified field name (we'll accept any field name since schema is dynamic)
+                # Basic validation - field should not be empty and not 'none'
+                if unified_field and unified_field.lower() == 'none':
                     return None, 0.0
                 
                 if unified_field and unified_field.lower() == 'none':
@@ -183,12 +183,6 @@ class LLMSchemaMapper:
                 
                 logger.info(f"LLM mapping: '{unified_field}' (confidence: {confidence})")
                 return unified_field, confidence
-            
-            # If no JSON found, try to extract field name directly
-            for field in UNIFIED_SCHEMA.keys():
-                if field.lower() in response_text.lower():
-                    logger.info(f"LLM text-based mapping: '{field}' (confidence: 0.7)")
-                    return field, 0.7  # Medium confidence for text-based extraction
             
             logger.warning(f"Could not parse LLM response: {response_text}")
             return None, 0.0

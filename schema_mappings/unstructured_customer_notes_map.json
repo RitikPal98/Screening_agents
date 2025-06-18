@@ -1,0 +1,64 @@
+{
+  "source_name": "unstructured_customer_notes",
+  "field_mappings": {
+    "email": {
+      "unified_field": "email",
+      "confidence": 1.0,
+      "timestamp": "2025-06-18T18:13:30.211185"
+    },
+    "phone": {
+      "unified_field": "phone",
+      "confidence": 1.0,
+      "timestamp": "2025-06-18T18:13:31.895633"
+    },
+    "national_id": {
+      "unified_field": "national_id",
+      "confidence": 1.0,
+      "timestamp": "2025-06-18T18:13:33.849814"
+    },
+    "full_name": {
+      "unified_field": "full_name",
+      "confidence": 1.0,
+      "timestamp": "2025-06-18T18:13:35.816313"
+    },
+    "first_name": {
+      "unified_field": "first_name",
+      "confidence": 1.0,
+      "timestamp": "2025-06-18T18:13:37.153948"
+    },
+    "last_name": {
+      "unified_field": "last_name",
+      "confidence": 1.0,
+      "timestamp": "2025-06-18T18:13:38.610933"
+    },
+    "country": {
+      "unified_field": "country",
+      "confidence": 1.0,
+      "timestamp": "2025-06-18T18:13:40.922985"
+    },
+    "source_name": {
+      "unified_field": "source_name",
+      "confidence": 1.0,
+      "timestamp": "2025-06-18T18:13:42.313797"
+    },
+    "raw_text": {
+      "unified_field": "raw_text",
+      "confidence": 1.0,
+      "timestamp": "2025-06-18T18:13:43.746549"
+    },
+    "address": {
+      "unified_field": "address",
+      "confidence": 1.0,
+      "timestamp": "2025-06-18T18:13:45.458771"
+    },
+    "dob": {
+      "unified_field": "dob",
+      "confidence": 1.0,
+      "timestamp": "2025-06-18T18:13:47.007363"
+    }
+  },
+  "unmapped_fields": [],
+  "total_fields": 11,
+  "mapped_fields": 11,
+  "mapping_success_rate": 1.0
+}

@@ -1,0 +1,93 @@
+{
+  "source_name": "crm_system",
+  "field_mappings": {
+    "customer_id": {
+      "unified_field": "customer_id",
+      "confidence": 1.0,
+      "timestamp": "2025-06-18T18:11:37.713227"
+    },
+    "fname": {
+      "unified_field": "first_name",
+      "confidence": 0.95,
+      "timestamp": "2025-06-18T18:11:39.588643"
+    },
+    "lname": {
+      "unified_field": "last_name",
+      "confidence": 1.0,
+      "timestamp": "2025-06-18T18:11:41.466488"
+    },
+    "birth_dt": {
+      "unified_field": "dob",
+      "confidence": 1.0,
+      "timestamp": "2025-06-18T18:11:43.408947"
+    },
+    "id_no": {
+      "unified_field": "national_id",
+      "confidence": 0.95,
+      "timestamp": "2025-06-18T18:11:49.037970"
+    },
+    "email_addr": {
+      "unified_field": "email",
+      "confidence": 1.0,
+      "timestamp": "2025-06-18T18:11:50.625756"
+    },
+    "phone_num": {
+      "unified_field": "phone",
+      "confidence": 1.0,
+      "timestamp": "2025-06-18T18:11:52.244678"
+    },
+    "street_address": {
+      "unified_field": "address",
+      "confidence": 0.95,
+      "timestamp": "2025-06-18T18:11:54.546700"
+    },
+    "country_code": {
+      "unified_field": "country",
+      "confidence": 1.0,
+      "timestamp": "2025-06-18T18:11:56.624938"
+    }
+  },
+  "unmapped_fields": [
+    {
+      "source_field": "sex",
+      "source_name": "crm_system",
+      "confidence": 0.0,
+      "timestamp": "2025-06-18T18:11:45.556307",
+      "context_fields": [
+        "customer_id",
+        "fname",
+        "lname",
+        "birth_dt",
+        "sex",
+        "id_no",
+        "email_addr",
+        "phone_num",
+        "street_address",
+        "country_code",
+        "last_update"
+      ]
+    },
+    {
+      "source_field": "last_update",
+      "source_name": "crm_system",
+      "confidence": 0.0,
+      "timestamp": "2025-06-18T18:11:59.477641",
+      "context_fields": [
+        "customer_id",
+        "fname",
+        "lname",
+        "birth_dt",
+        "sex",
+        "id_no",
+        "email_addr",
+        "phone_num",
+        "street_address",
+        "country_code",
+        "last_update"
+      ]
+    }
+  ],
+  "total_fields": 11,
+  "mapped_fields": 9,
+  "mapping_success_rate": 0.8181818181818182
+}

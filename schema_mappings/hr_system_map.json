@@ -1,0 +1,121 @@
+{
+  "source_name": "hr_system",
+  "field_mappings": {
+    "f_name": {
+      "unified_field": "first_name",
+      "confidence": 0.95,
+      "timestamp": "2025-06-18T18:12:29.647853"
+    },
+    "l_name": {
+      "unified_field": "last_name",
+      "confidence": 0.95,
+      "timestamp": "2025-06-18T18:12:31.668959"
+    },
+    "employee_name": {
+      "unified_field": "full_name",
+      "confidence": 0.95,
+      "timestamp": "2025-06-18T18:12:33.682302"
+    },
+    "birth_date": {
+      "unified_field": "dob",
+      "confidence": 1.0,
+      "timestamp": "2025-06-18T18:12:35.421198"
+    },
+    "social_security": {
+      "unified_field": "national_id",
+      "confidence": 0.95,
+      "timestamp": "2025-06-18T18:12:41.924072"
+    },
+    "work_email": {
+      "unified_field": "email",
+      "confidence": 1.0,
+      "timestamp": "2025-06-18T18:12:44.050413"
+    },
+    "cell_number": {
+      "unified_field": "phone",
+      "confidence": 0.95,
+      "timestamp": "2025-06-18T18:12:46.041775"
+    },
+    "home_address": {
+      "unified_field": "address",
+      "confidence": 0.95,
+      "timestamp": "2025-06-18T18:12:47.900324"
+    },
+    "country_name": {
+      "unified_field": "country",
+      "confidence": 1.0,
+      "timestamp": "2025-06-18T18:12:49.547215"
+    },
+    "last_modified": {
+      "unified_field": "last_modified",
+      "confidence": 0.8,
+      "timestamp": "2025-06-18T18:12:53.234124",
+      "auto_extended": true
+    }
+  },
+  "unmapped_fields": [
+    {
+      "source_field": "emp_id",
+      "source_name": "hr_system",
+      "confidence": 0.0,
+      "timestamp": "2025-06-18T18:12:26.518686",
+      "context_fields": [
+        "emp_id",
+        "f_name",
+        "l_name",
+        "employee_name",
+        "birth_date",
+        "gender_code",
+        "social_security",
+        "work_email",
+        "cell_number",
+        "home_address",
+        "country_name",
+        "last_modified"
+      ]
+    },
+    {
+      "source_field": "gender_code",
+      "source_name": "hr_system",
+      "confidence": 0.0,
+      "timestamp": "2025-06-18T18:12:37.893009",
+      "context_fields": [
+        "emp_id",
+        "f_name",
+        "l_name",
+        "employee_name",
+        "birth_date",
+        "gender_code",
+        "social_security",
+        "work_email",
+        "cell_number",
+        "home_address",
+        "country_name",
+        "last_modified"
+      ]
+    },
+    {
+      "source_field": "last_modified",
+      "source_name": "hr_system",
+      "confidence": 0.0,
+      "timestamp": "2025-06-18T18:12:52.530688",
+      "context_fields": [
+        "emp_id",
+        "f_name",
+        "l_name",
+        "employee_name",
+        "birth_date",
+        "gender_code",
+        "social_security",
+        "work_email",
+        "cell_number",
+        "home_address",
+        "country_name",
+        "last_modified"
+      ]
+    }
+  ],
+  "total_fields": 12,
+  "mapped_fields": 10,
+  "mapping_success_rate": 0.8333333333333334
+}

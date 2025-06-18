@@ -38,13 +38,20 @@ def main():
             logger.error("No unified data files found in output directory! Please run Agent 1 first.")
             return
         
-        # Check for schema mapping files
-        mapping_files = list(schema_mappings_dir.glob("*_schema_map.json"))
+        # Check for schema mapping files (enhanced agent uses different naming)
+        mapping_files = list(schema_mappings_dir.glob("*_map.json"))
         if not mapping_files:
             logger.error("No schema mapping files found! Please run Agent 1 first.")
             return
         
+        # Check for unified schema file
+        unified_schema_file = Path("unified_schema.json")
+        if not unified_schema_file.exists():
+            logger.error("Unified schema file not found! Please run Agent 1 first.")
+            return
+        
         logger.info(f"Found {len(unified_files)} unified data files and {len(mapping_files)} schema mapping files")
+        logger.info("✅ Enhanced Schema Agent outputs detected")
         
         # Example query
         query = {

@@ -1,0 +1,42 @@
+{
+  "customer_id": "a0ae8e10-73eb-4bfe-8187-5760c4a243e6",
+  "first_name": "Jason",
+  "last_name": "King",
+  "full_name": "Jason King",
+  "dob": "",
+  "email": "elewis@hotmail.com",
+  "phone": "001-985-792-0564",
+  "address": "13849 Romero Stream\nJacquelinechester, ND 31821",
+  "national_id": "",
+  "country": "",
+  "source_name": "bank_customers",
+  "raw_text": "",
+  "sex": "",
+  "record_updated": "",
+  "Gender": "",
+  "Account Type": "Checking",
+  "Account Balance": 8395.59,
+  "Registration Date": "2021-06-19",
+  "Male": "",
+  "Savings": "",
+  "91666.17": "",
+  "2020-01-16": "",
+  "last_update": "",
+  "timestamp": "",
+  "gender_code": "",
+  "last_modified": "",
+  "modified_date": "",
+  "sources": [
+    "bank_customers",
+    "bank_customers_without_schema"
+  ],
+  "match_count": 14,
+  "match_quality": {
+    "is_strong_match": false,
+    "overall_score": 100.0,
+    "field_scores": {
+      "full_name": 100.0
+    }
+  },
+  "merged_at": "2025-06-18T18:58:40.074130"
+}

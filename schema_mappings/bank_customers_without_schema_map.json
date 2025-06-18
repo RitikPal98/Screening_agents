@@ -1,0 +1,131 @@
+{
+  "source_name": "bank_customers_without_schema",
+  "field_mappings": {
+    "07f4308a-489d-432b-b95a-2d520173636a": {
+      "unified_field": "customer_id",
+      "confidence": 0.95,
+      "timestamp": "2025-06-18T18:11:05.357281"
+    },
+    "Donald Carr": {
+      "unified_field": "full_name",
+      "confidence": 0.95,
+      "timestamp": "2025-06-18T18:11:07.292552"
+    },
+    "USNS Harris\nFPO AP 49989": {
+      "unified_field": "address",
+      "confidence": 0.95,
+      "timestamp": "2025-06-18T18:11:18.118584"
+    },
+    "thompsonlinda@yahoo.com": {
+      "unified_field": "email",
+      "confidence": 1.0,
+      "timestamp": "2025-06-18T18:11:20.119573"
+    },
+    "(410)947-6505": {
+      "unified_field": "phone",
+      "confidence": 1.0,
+      "timestamp": "2025-06-18T18:11:21.804654"
+    },
+    "Savings": {
+      "unified_field": "Savings",
+      "confidence": 0.8,
+      "timestamp": "2025-06-18T18:11:25.715017",
+      "auto_extended": true
+    }
+  },
+  "unmapped_fields": [
+    {
+      "source_field": "32",
+      "source_name": "bank_customers_without_schema",
+      "confidence": 0.0,
+      "timestamp": "2025-06-18T18:11:09.726828",
+      "context_fields": [
+        "07f4308a-489d-432b-b95a-2d520173636a",
+        "Donald Carr",
+        "32",
+        "Male",
+        "USNS Harris\nFPO AP 49989",
+        "thompsonlinda@yahoo.com",
+        "(410)947-6505",
+        "Savings",
+        "91666.17",
+        "2020-01-16"
+      ]
+    },
+    {
+      "source_field": "Male",
+      "source_name": "bank_customers_without_schema",
+      "confidence": 0.0,
+      "timestamp": "2025-06-18T18:11:13.985067",
+      "context_fields": [
+        "07f4308a-489d-432b-b95a-2d520173636a",
+        "Donald Carr",
+        "32",
+        "Male",
+        "USNS Harris\nFPO AP 49989",
+        "thompsonlinda@yahoo.com",
+        "(410)947-6505",
+        "Savings",
+        "91666.17",
+        "2020-01-16"
+      ]
+    },
+    {
+      "source_field": "Savings",
+      "source_name": "bank_customers_without_schema",
+      "confidence": 0.0,
+      "timestamp": "2025-06-18T18:11:24.978669",
+      "context_fields": [
+        "07f4308a-489d-432b-b95a-2d520173636a",
+        "Donald Carr",
+        "32",
+        "Male",
+        "USNS Harris\nFPO AP 49989",
+        "thompsonlinda@yahoo.com",
+        "(410)947-6505",
+        "Savings",
+        "91666.17",
+        "2020-01-16"
+      ]
+    },
+    {
+      "source_field": "91666.17",
+      "source_name": "bank_customers_without_schema",
+      "confidence": 0.0,
+      "timestamp": "2025-06-18T18:11:30.002890",
+      "context_fields": [
+        "07f4308a-489d-432b-b95a-2d520173636a",
+        "Donald Carr",
+        "32",
+        "Male",
+        "USNS Harris\nFPO AP 49989",
+        "thompsonlinda@yahoo.com",
+        "(410)947-6505",
+        "Savings",
+        "91666.17",
+        "2020-01-16"
+      ]
+    },
+    {
+      "source_field": "2020-01-16",
+      "source_name": "bank_customers_without_schema",
+      "confidence": 0.0,
+      "timestamp": "2025-06-18T18:11:34.698942",
+      "context_fields": [
+        "07f4308a-489d-432b-b95a-2d520173636a",
+        "Donald Carr",
+        "32",
+        "Male",
+        "USNS Harris\nFPO AP 49989",
+        "thompsonlinda@yahoo.com",
+        "(410)947-6505",
+        "Savings",
+        "91666.17",
+        "2020-01-16"
+      ]
+    }
+  ],
+  "total_fields": 10,
+  "mapped_fields": 6,
+  "mapping_success_rate": 0.6
+}

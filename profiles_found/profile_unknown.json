@@ -1,18 +1,35 @@
 {
   "customer_id": "BANK001",
-  "full_name": "Leonardo",
-  "full_name.1": "DiCaprio",
-  "full_name.2": "Leonardo DiCaprio",
+  "first_name": "Leonardo",
+  "last_name": "DiCaprio",
+  "full_name": "Leonardo DiCaprio",
+  "dob": "1974-11-11",
   "email": "leonardo.dicaprio@bank.com",
   "phone": "+1(555)501-0001",
   "address": "369 Wolf St",
-  "dob": "1974-11-11",
-  "created_at": NaN,
-  "updated_at": "2023-12-03 08:30:00",
+  "national_id": 667788990,
+  "country": "USA",
+  "source_name": "banking_system",
+  "raw_text": "",
+  "sex": "",
+  "record_updated": "2023-12-03 08:30:00",
+  "Gender": "",
+  "Account Type": "",
+  "Account Balance": "",
+  "Registration Date": "",
+  "Male": "",
+  "Savings": "",
+  "91666.17": "",
+  "2020-01-16": "",
+  "last_update": "",
+  "timestamp": "",
+  "gender_code": "",
+  "last_modified": "",
+  "modified_date": "",
   "sources": [
     "banking_system"
   ],
-  "match_count": 1,
+  "match_count": 2,
   "match_quality": {
     "is_strong_match": false,
     "overall_score": 100.0,
@@ -20,5 +37,5 @@
       "dob": 100.0
     }
   },
-  "merged_at": "2025-06-16T00:06:16.690157"
+  "merged_at": "2025-06-18T18:16:18.399962"
 }

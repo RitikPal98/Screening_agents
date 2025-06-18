@@ -26,7 +26,7 @@ class CustomJSONEncoder(json.JSONEncoder):
 
 # Import our agents
 from agents.profile_matching_agent import ProfileMatchingAgent
-from agents.schema_identification_agent import SchemaIdentificationAgent
+from agents.schema_identification_agent import EnhancedSchemaIdentificationAgent
 from utils.data_loader import DataLoader
 
 # Set up logging
@@ -40,7 +40,7 @@ CORS(app)  # Enable CORS for React frontend
 
 # Initialize agents
 profile_agent = ProfileMatchingAgent()
-schema_agent = SchemaIdentificationAgent()
+schema_agent = EnhancedSchemaIdentificationAgent()
 data_loader = DataLoader()
 
 @app.route('/health', methods=['GET'])
@@ -106,24 +106,39 @@ def match_profile():
         
         logger.info(f"Searching for profile with query: {query}")
         
-        # Use Agent 2 to find and merge profile
-        merged_profile = profile_agent.find_and_merge_profile(query)
+        # Use Agent 2 enhanced method to find all matches
+        search_result = profile_agent.find_and_return_all_matches(query)
         
-        if not merged_profile:
+        if not search_result:
             return jsonify({
                 'success': True,
                 'profile': None,
+                'individual_matches': [],
+                'match_summary': {
+                    'total_matches': 0,
+                    'sources_matched': 0,
+                    'source_breakdown': {},
+                    'has_strong_matches': False,
+                    'highest_score': 0
+                },
                 'message': 'No matching profile found',
                 'query': query
             })
         
-        # Enhance the response with additional metadata
+        # Extract components from search result
+        merged_profile = search_result['merged_profile']
+        individual_matches = search_result['individual_matches']
+        match_summary = search_result['match_summary']
+        
+        # Enhance the response with comprehensive match data
         response_data = {
             'success': True,
             'profile': merged_profile,
+            'individual_matches': individual_matches,
+            'match_summary': match_summary,
             'query': query,
             'metadata': {
-                'search_timestamp': datetime.now().isoformat(),
+                'search_timestamp': search_result['search_timestamp'],
                 'sources_searched': len(profile_agent.load_processed_data()),
                 'match_quality': merged_profile.get('match_quality', {}),
                 'sources': merged_profile.get('sources', []),
@@ -131,7 +146,7 @@ def match_profile():
             }
         }
         
-        logger.info(f"Found matching profile from {len(merged_profile.get('sources', []))} sources")
+        logger.info(f"Found {match_summary['total_matches']} individual matches from {match_summary['sources_matched']} sources")
         return jsonify(response_data)
         
     except Exception as e:

@@ -1,0 +1,106 @@
+{
+  "source_name": "legacy_db",
+  "field_mappings": {
+    "cust_id": {
+      "unified_field": "customer_id",
+      "confidence": 0.95,
+      "timestamp": "2025-06-18T18:12:56.006919"
+    },
+    "first_nm": {
+      "unified_field": "first_name",
+      "confidence": 1.0,
+      "timestamp": "2025-06-18T18:12:58.296126"
+    },
+    "last_nm": {
+      "unified_field": "last_name",
+      "confidence": 1.0,
+      "timestamp": "2025-06-18T18:13:00.301336"
+    },
+    "full_nm": {
+      "unified_field": "full_name",
+      "confidence": 1.0,
+      "timestamp": "2025-06-18T18:13:02.248813"
+    },
+    "date_of_birth": {
+      "unified_field": "dob",
+      "confidence": 1.0,
+      "timestamp": "2025-06-18T18:13:04.213313"
+    },
+    "ssn": {
+      "unified_field": "national_id",
+      "confidence": 0.95,
+      "timestamp": "2025-06-18T18:13:10.019666"
+    },
+    "email": {
+      "unified_field": "email",
+      "confidence": 1.0,
+      "timestamp": "2025-06-18T18:13:11.792173"
+    },
+    "telephone": {
+      "unified_field": "phone",
+      "confidence": 1.0,
+      "timestamp": "2025-06-18T18:13:13.041200"
+    },
+    "mailing_address": {
+      "unified_field": "address",
+      "confidence": 0.95,
+      "timestamp": "2025-06-18T18:13:15.060562"
+    },
+    "nation": {
+      "unified_field": "country",
+      "confidence": 0.95,
+      "timestamp": "2025-06-18T18:13:16.916752"
+    },
+    "modified_date": {
+      "unified_field": "modified_date",
+      "confidence": 0.8,
+      "timestamp": "2025-06-18T18:13:19.630322",
+      "auto_extended": true
+    }
+  },
+  "unmapped_fields": [
+    {
+      "source_field": "gender",
+      "source_name": "legacy_db",
+      "confidence": 0.0,
+      "timestamp": "2025-06-18T18:13:06.370837",
+      "context_fields": [
+        "cust_id",
+        "first_nm",
+        "last_nm",
+        "full_nm",
+        "date_of_birth",
+        "gender",
+        "ssn",
+        "email",
+        "telephone",
+        "mailing_address",
+        "nation",
+        "modified_date"
+      ]
+    },
+    {
+      "source_field": "modified_date",
+      "source_name": "legacy_db",
+      "confidence": 0.0,
+      "timestamp": "2025-06-18T18:13:18.913921",
+      "context_fields": [
+        "cust_id",
+        "first_nm",
+        "last_nm",
+        "full_nm",
+        "date_of_birth",
+        "gender",
+        "ssn",
+        "email",
+        "telephone",
+        "mailing_address",
+        "nation",
+        "modified_date"
+      ]
+    }
+  ],
+  "total_fields": 12,
+  "mapped_fields": 11,
+  "mapping_success_rate": 0.9166666666666666
+}

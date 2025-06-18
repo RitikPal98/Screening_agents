@@ -167,10 +167,10 @@ class DataLoader:
             return None
         
         # Import here to avoid circular import
-        from agents.schema_identification_agent import SchemaIdentificationAgent
+        from agents.schema_identification_agent import EnhancedSchemaIdentificationAgent
         
         # Create agent instance and apply mapping
-        agent = SchemaIdentificationAgent()
+        agent = EnhancedSchemaIdentificationAgent()
         mapped_df = agent.map_to_unified_schema(df, schema_mapping)
         
         logger.info(f"Applied schema mapping to {source_name}: {len(df)} rows transformed")

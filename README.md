@@ -1,21 +1,38 @@
-# Schema Identification Agent - AI-Powered Customer Data Integration
+# Enhanced Schema Identification Agent - AI-Powered Customer Data Integration 🤖
 
-A modular Python system using AI-assisted agents to handle fragmented customer data from multiple sources. This repository contains **Agent 1: Schema Identification Agent** that automatically detects and maps inconsistent schemas to a unified structure.
+A robust AI-powered system for handling **both structured and unstructured** customer data from multiple sources (2000+). The enhanced system intelligently processes diverse data types, evolves schemas dynamically, and builds complete customer profiles through AI-powered field extraction and profile matching.
 
 ## System Overview
 
-### Agent 1: Schema Identification Agent
+### Agent 1: Enhanced Schema Identification Agent 🔥
 
-**Responsibilities:**
+**Purpose**: Intelligently process structured & unstructured data with dynamic schema evolution
 
-- Inspect schemas (column names) from various data sources
-- Map inconsistent or legacy field names to unified schema using Gemini LLM logic
-- Save mappings per source for later use by other agents
-- Transform data to match unified schema structure
+**Input Types:**
 
-**Unified Schema Fields:**
+- **Structured**: CSV/Excel/JSON files with column headers
+- **Unstructured**: Free-text data (customer notes, descriptions, etc.)
 
-- `customer_id`, `full_name`, `email`, `phone`, `address`, `dob`, `created_at`, `updated_at`
+**Key Features:**
+
+- ✅ **Intelligent Data Type Detection**: Auto-detects structured vs unstructured data
+- ✅ **Dynamic Schema Evolution**: Extends schema when new relevant fields discovered
+- ✅ **LLM-Powered Text Extraction**: Extracts structured fields from free-text
+- ✅ **Smart Name Handling**: Manages `first_name`, `last_name`, `full_name` intelligently
+- ✅ **Comprehensive Logging**: Tracks unmapped fields with confidence scores
+
+**Output Files:**
+
+- `processed_data/*.csv` - Unified data format
+- `schema_mappings/*_map.json` - Field mapping details
+- `unified_schema.json` - Dynamic schema definition
+- `unmapped_fields.json` - Unmapped fields log
+
+### Agent 2: Customer Profile Integration Agent
+
+**Purpose**: Query and stitch related customer data using anchor attributes
+**Input**: Unified data from Enhanced Agent 1 + customer query
+**Output**: Complete customer profiles with all related data
 
 ## Quick Start
 
@@ -39,9 +56,40 @@ A modular Python system using AI-assisted agents to handle fragmented customer d
    pip install -r requirements.txt
    ```
 
-3. **Run the system:**
+3. **Set up Gemini API Key:**
+
+   ```bash
+   cd utils
+   echo "GOOGLE_API_KEY=your_gemini_api_key_here" > .env
+   ```
+
+4. **Add your data sources** to the `data_sources/` directory:
+
+   **Structured Data** (CSV/Excel/JSON with columns):
+
+   ```
+   data_sources/
+   ├── crm_system.csv           # fname, lname, email, etc.
+   ├── ecommerce_platform.csv   # given_name, family_name, contact, etc.
+   └── legacy_database.csv      # first_nm, last_nm, email_addr, etc.
+   ```
+
+   **Unstructured Data** (Single text column):
+
+   ```
+   data_sources/
+   └── customer_notes.csv       # Free-text customer information
+   ```
+
+5. **Run Enhanced Agent 1** (Schema Identification):
+
    ```bash
    python main.py
+   ```
+
+6. **Run Agent 2** (Profile Matching):
+   ```bash
+   python profile_matcher.py
    ```
 
 ## Project Structure

@@ -1,0 +1,93 @@
+{
+  "source_name": "ecommerce_platform",
+  "field_mappings": {
+    "user_id": {
+      "unified_field": "customer_id",
+      "confidence": 0.95,
+      "timestamp": "2025-06-18T18:12:03.491050"
+    },
+    "given_name": {
+      "unified_field": "first_name",
+      "confidence": 0.95,
+      "timestamp": "2025-06-18T18:12:05.306720"
+    },
+    "family_name": {
+      "unified_field": "last_name",
+      "confidence": 1.0,
+      "timestamp": "2025-06-18T18:12:06.950688"
+    },
+    "birthdate": {
+      "unified_field": "dob",
+      "confidence": 1.0,
+      "timestamp": "2025-06-18T18:12:08.921831"
+    },
+    "national_identification": {
+      "unified_field": "national_id",
+      "confidence": 0.95,
+      "timestamp": "2025-06-18T18:12:14.165263"
+    },
+    "contact_email": {
+      "unified_field": "email",
+      "confidence": 1.0,
+      "timestamp": "2025-06-18T18:12:15.798713"
+    },
+    "mobile_phone": {
+      "unified_field": "phone",
+      "confidence": 0.95,
+      "timestamp": "2025-06-18T18:12:17.621544"
+    },
+    "shipping_address": {
+      "unified_field": "address",
+      "confidence": 0.95,
+      "timestamp": "2025-06-18T18:12:19.187539"
+    },
+    "country": {
+      "unified_field": "country",
+      "confidence": 1.0,
+      "timestamp": "2025-06-18T18:12:21.217059"
+    }
+  },
+  "unmapped_fields": [
+    {
+      "source_field": "sex",
+      "source_name": "ecommerce_platform",
+      "confidence": 0.0,
+      "timestamp": "2025-06-18T18:12:11.201896",
+      "context_fields": [
+        "user_id",
+        "given_name",
+        "family_name",
+        "birthdate",
+        "sex",
+        "national_identification",
+        "contact_email",
+        "mobile_phone",
+        "shipping_address",
+        "country",
+        "timestamp"
+      ]
+    },
+    {
+      "source_field": "timestamp",
+      "source_name": "ecommerce_platform",
+      "confidence": 0.0,
+      "timestamp": "2025-06-18T18:12:23.132638",
+      "context_fields": [
+        "user_id",
+        "given_name",
+        "family_name",
+        "birthdate",
+        "sex",
+        "national_identification",
+        "contact_email",
+        "mobile_phone",
+        "shipping_address",
+        "country",
+        "timestamp"
+      ]
+    }
+  ],
+  "total_fields": 11,
+  "mapped_fields": 9,
+  "mapping_success_rate": 0.8181818181818182
+}

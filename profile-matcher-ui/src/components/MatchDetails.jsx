@@ -4,7 +4,7 @@
 
 import React, { useState } from "react";
 
-const MatchDetails = ({ metadata, query }) => {
+const MatchDetails = ({ metadata, query, matchSummary }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   if (!metadata) {
@@ -180,6 +180,88 @@ const MatchDetails = ({ metadata, query }) => {
     );
   };
 
+  const renderMatchSummary = () => {
+    if (!matchSummary) return null;
+
+    return (
+      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200 p-4">
+        <h4 className="text-sm font-medium text-gray-900 mb-3 flex items-center">
+          <svg
+            className="w-4 h-4 mr-2 text-blue-500"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+            />
+          </svg>
+          Enhanced Match Summary
+        </h4>
+
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+          <div className="text-center">
+            <div className="text-xl font-bold text-blue-600">
+              {matchSummary.total_matches}
+            </div>
+            <div className="text-xs text-gray-600">Total Matches</div>
+          </div>
+          <div className="text-center">
+            <div className="text-xl font-bold text-purple-600">
+              {matchSummary.sources_matched}
+            </div>
+            <div className="text-xs text-gray-600">Sources</div>
+          </div>
+          <div className="text-center">
+            <div className="text-xl font-bold text-green-600">
+              {Math.round(matchSummary.highest_score)}%
+            </div>
+            <div className="text-xs text-gray-600">Best Score</div>
+          </div>
+          <div className="text-center">
+            <div
+              className={`text-xl font-bold ${
+                matchSummary.has_strong_matches
+                  ? "text-green-600"
+                  : "text-orange-600"
+              }`}
+            >
+              {matchSummary.has_strong_matches ? "✓" : "~"}
+            </div>
+            <div className="text-xs text-gray-600">Strong Match</div>
+          </div>
+        </div>
+
+        {matchSummary.source_breakdown &&
+          Object.keys(matchSummary.source_breakdown).length > 0 && (
+            <div>
+              <div className="text-xs font-medium text-gray-700 mb-2">
+                Matches by Source:
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {Object.entries(matchSummary.source_breakdown).map(
+                  ([source, count]) => (
+                    <span
+                      key={source}
+                      className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-white text-gray-700 border border-gray-300"
+                    >
+                      {source
+                        .replace(/_/g, " ")
+                        .replace(/\b\w/g, (l) => l.toUpperCase())}
+                      : {count}
+                    </span>
+                  )
+                )}
+              </div>
+            </div>
+          )}
+      </div>
+    );
+  };
+
   const renderSearchMetadata = () => (
     <div className="bg-white rounded-lg border border-gray-200 p-4">
       <h4 className="text-sm font-medium text-gray-900 mb-3">
@@ -198,7 +280,9 @@ const MatchDetails = ({ metadata, query }) => {
         </div>
         <div className="flex justify-between">
           <dt className="text-gray-600">Total Matches:</dt>
-          <dd className="text-gray-900">{metadata.match_count || 0}</dd>
+          <dd className="text-gray-900">
+            {matchSummary?.total_matches || metadata.match_count || 0}
+          </dd>
         </div>
         {metadata.sources && metadata.sources.length > 0 && (
           <div>
@@ -250,6 +334,8 @@ const MatchDetails = ({ metadata, query }) => {
       </div>
 
       <div className="space-y-6">
+        {renderMatchSummary()}
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {renderQueryInfo()}
           {renderMatchQuality()}

@@ -1,24 +1,44 @@
 {
   "customer_id": "BANK002",
-  "full_name": "Kate",
-  "full_name.1": "Winslet",
-  "full_name.2": "Kate Winslet",
+  "first_name": "Kate",
+  "last_name": "Winslet",
+  "full_name": "Kate Winslet",
+  "dob": "1975-10-05",
   "email": "kate.winslet@bank.com",
   "phone": "+1(555)501-0002",
   "address": "147 Titanic Ave",
-  "dob": "1975-10-05",
-  "created_at": "",
-  "updated_at": "2023-12-03 10:15:00",
+  "national_id": 778899001,
+  "country": "USA",
+  "source_name": "banking_system",
+  "raw_text": "",
+  "sex": "",
+  "record_updated": "2023-12-03 10:15:00",
+  "Gender": "",
+  "Account Type": "",
+  "Account Balance": "",
+  "Registration Date": "",
+  "Male": "",
+  "Savings": "",
+  "91666.17": "",
+  "2020-01-16": "",
+  "last_update": "",
+  "timestamp": "",
+  "gender_code": "",
+  "last_modified": "",
+  "modified_date": "",
   "sources": [
-    "banking_system"
+    "banking_system",
+    "bank_customers",
+    "bank_customers_without_schema",
+    "legacy_db"
   ],
-  "match_count": 1,
+  "match_count": 9,
   "match_quality": {
     "is_strong_match": false,
     "overall_score": 100.0,
     "field_scores": {
-      "dob": 100.0
+      "full_name": 100.0
     }
   },
-  "merged_at": "2025-06-16T01:37:28.553563"
+  "merged_at": "2025-06-18T18:59:55.511251"
 }

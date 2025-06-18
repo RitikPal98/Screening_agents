@@ -1,0 +1,143 @@
+{
+  "source_name": "bank_customers",
+  "field_mappings": {
+    "Customer ID": {
+      "unified_field": "customer_id",
+      "confidence": 1.0,
+      "timestamp": "2025-06-18T18:10:38.641251"
+    },
+    "Name": {
+      "unified_field": "full_name",
+      "confidence": 0.95,
+      "timestamp": "2025-06-18T18:10:41.190158"
+    },
+    "Address": {
+      "unified_field": "address",
+      "confidence": 0.95,
+      "timestamp": "2025-06-18T18:10:50.574265"
+    },
+    "Email": {
+      "unified_field": "email",
+      "confidence": 1.0,
+      "timestamp": "2025-06-18T18:10:51.898538"
+    },
+    "Phone Number": {
+      "unified_field": "phone",
+      "confidence": 1.0,
+      "timestamp": "2025-06-18T18:10:53.159382"
+    },
+    "Account Type": {
+      "unified_field": "Account Type",
+      "confidence": 0.8,
+      "timestamp": "2025-06-18T18:10:56.167479",
+      "auto_extended": true
+    },
+    "Account Balance": {
+      "unified_field": "Account Balance",
+      "confidence": 0.8,
+      "timestamp": "2025-06-18T18:10:58.919254",
+      "auto_extended": true
+    },
+    "Registration Date": {
+      "unified_field": "Registration Date",
+      "confidence": 0.8,
+      "timestamp": "2025-06-18T18:11:02.383752",
+      "auto_extended": true
+    }
+  },
+  "unmapped_fields": [
+    {
+      "source_field": "Age",
+      "source_name": "bank_customers",
+      "confidence": 0.0,
+      "timestamp": "2025-06-18T18:10:43.917904",
+      "context_fields": [
+        "Customer ID",
+        "Name",
+        "Age",
+        "Gender",
+        "Address",
+        "Email",
+        "Phone Number",
+        "Account Type",
+        "Account Balance",
+        "Registration Date"
+      ]
+    },
+    {
+      "source_field": "Gender",
+      "source_name": "bank_customers",
+      "confidence": 0.0,
+      "timestamp": "2025-06-18T18:10:47.431701",
+      "context_fields": [
+        "Customer ID",
+        "Name",
+        "Age",
+        "Gender",
+        "Address",
+        "Email",
+        "Phone Number",
+        "Account Type",
+        "Account Balance",
+        "Registration Date"
+      ]
+    },
+    {
+      "source_field": "Account Type",
+      "source_name": "bank_customers",
+      "confidence": 0.0,
+      "timestamp": "2025-06-18T18:10:54.974262",
+      "context_fields": [
+        "Customer ID",
+        "Name",
+        "Age",
+        "Gender",
+        "Address",
+        "Email",
+        "Phone Number",
+        "Account Type",
+        "Account Balance",
+        "Registration Date"
+      ]
+    },
+    {
+      "source_field": "Account Balance",
+      "source_name": "bank_customers",
+      "confidence": 0.0,
+      "timestamp": "2025-06-18T18:10:58.144449",
+      "context_fields": [
+        "Customer ID",
+        "Name",
+        "Age",
+        "Gender",
+        "Address",
+        "Email",
+        "Phone Number",
+        "Account Type",
+        "Account Balance",
+        "Registration Date"
+      ]
+    },
+    {
+      "source_field": "Registration Date",
+      "source_name": "bank_customers",
+      "confidence": 0.0,
+      "timestamp": "2025-06-18T18:11:01.675944",
+      "context_fields": [
+        "Customer ID",
+        "Name",
+        "Age",
+        "Gender",
+        "Address",
+        "Email",
+        "Phone Number",
+        "Account Type",
+        "Account Balance",
+        "Registration Date"
+      ]
+    }
+  ],
+  "total_fields": 10,
+  "mapped_fields": 8,
+  "mapping_success_rate": 0.8
+}

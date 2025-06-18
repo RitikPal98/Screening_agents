@@ -16,8 +16,7 @@ from difflib import SequenceMatcher
 import phonenumbers
 from email_validator import validate_email, EmailNotValidError
 
-# Import unified schema from config
-from utils.config import UNIFIED_SCHEMA
+# No need to import unified schema - will load from file
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -29,7 +28,7 @@ class ProfileMatchingAgent:
     Uses both exact and fuzzy matching to find related records.
     """
     
-    def __init__(self, processed_data_dir: str = "output", 
+    def __init__(self, processed_data_dir: str = "processed_data", 
                  profiles_dir: str = "profiles_found",
                  schema_mappings_dir: str = "schema_mappings"):
         """
@@ -44,6 +43,7 @@ class ProfileMatchingAgent:
         self.profiles_dir = profiles_dir
         self.schema_mappings_dir = schema_mappings_dir
         self.schema_mappings = {}
+        self.unified_schema = self._load_unified_schema()
         
         # Matching configuration with adjusted weights
         self.MATCH_WEIGHTS = {
@@ -88,12 +88,48 @@ class ProfileMatchingAgent:
         Path(self.profiles_dir).mkdir(parents=True, exist_ok=True)
         Path(self.schema_mappings_dir).mkdir(parents=True, exist_ok=True)
     
+    def _load_unified_schema(self) -> Dict[str, str]:
+        """
+        Load unified schema from the unified_schema.json file.
+        
+        Returns:
+            Dict[str, str]: Unified schema definition
+        """
+        schema_file = Path("unified_schema.json")
+        
+        if schema_file.exists():
+            try:
+                with open(schema_file, 'r') as f:
+                    schema = json.load(f)
+                logger.info(f"Loaded unified schema with {len(schema)} fields")
+                return schema
+            except Exception as e:
+                logger.error(f"Error loading unified schema: {str(e)}")
+        
+        # Fallback to default schema if file doesn't exist
+        logger.warning("Unified schema file not found, using default schema")
+        return {
+            "customer_id": "",
+            "first_name": "",
+            "last_name": "",
+            "full_name": "",
+            "dob": "",
+            "email": "",
+            "phone": "",
+            "address": "",
+            "national_id": "",
+            "country": "",
+            "source_name": "",
+            "raw_text": ""
+        }
+    
     def _load_schema_mappings(self):
         """Load all schema mapping files from the schema_mappings directory."""
         logger.info(f"Loading schema mappings from: {self.schema_mappings_dir}")
         
         mapping_dir = Path(self.schema_mappings_dir)
-        for mapping_file in mapping_dir.glob("*_schema_map.json"):
+        # Enhanced agent uses *_map.json naming convention
+        for mapping_file in mapping_dir.glob("*_map.json"):
             try:
                 with open(mapping_file, 'r') as f:
                     mapping = json.load(f)
@@ -102,6 +138,18 @@ class ProfileMatchingAgent:
                 logger.info(f"Loaded schema mapping for {source_name}")
             except Exception as e:
                 logger.error(f"Failed to load schema mapping from {mapping_file}: {str(e)}")
+                
+        # Also try legacy naming for backward compatibility
+        for mapping_file in mapping_dir.glob("*_schema_map.json"):
+            try:
+                with open(mapping_file, 'r') as f:
+                    mapping = json.load(f)
+                source_name = mapping['source_name']
+                if source_name not in self.schema_mappings:  # Don't override enhanced mappings
+                    self.schema_mappings[source_name] = mapping
+                    logger.info(f"Loaded legacy schema mapping for {source_name}")
+            except Exception as e:
+                logger.error(f"Failed to load legacy schema mapping from {mapping_file}: {str(e)}")
     
     def _get_field_mapping(self, source_name: str, unified_field: str) -> List[str]:
         """
@@ -115,11 +163,21 @@ class ProfileMatchingAgent:
             List[str]: List of source field names that map to the unified field
         """
         mapping = self.schema_mappings.get(source_name, {})
-        mappings = mapping.get('mappings', {})
         
+        # Handle enhanced agent mapping structure
+        field_mappings = mapping.get('field_mappings', {})
+        if field_mappings:
+            source_fields = []
+            for source_field, mapping_info in field_mappings.items():
+                if mapping_info.get('unified_field') == unified_field:
+                    source_fields.append(source_field)
+            return source_fields
+        
+        # Handle legacy mapping structure for backward compatibility
+        mappings = mapping.get('mappings', {})
         source_fields = []
         for source_field, mapping_info in mappings.items():
-            if mapping_info['unified_field'] == unified_field:
+            if mapping_info.get('unified_field') == unified_field:
                 source_fields.append(source_field)
         
         return source_fields
@@ -471,27 +529,58 @@ class ProfileMatchingAgent:
             # Get all source fields that map to this unified field
             source_fields = self._get_field_mapping(source_name, field)
             
-            # If no schema mapping found, try direct field matching
-            if not source_fields:
+            # Filter out mapped fields that don't actually exist in the record
+            existing_source_fields = [sf for sf in source_fields if sf in record]
+            
+            # If no valid schema mapping found, try direct field matching
+            if not existing_source_fields:
                 logger.debug(f"No schema mapping found for {field}, trying direct match")
                 if field in record:
                     source_fields = [field]
+                    logger.debug(f"Using direct field match: {field}")
                 elif field == 'full_name':
                     # For full_name, check all name-related columns
-                    name_columns = [col for col in record.keys() if 'full_name' in col.lower() or 'name' in col.lower()]
+                    name_columns = [col for col in record.keys() if any(name_term in col.lower() for name_term in ['full_name', 'name']) and 'source_name' not in col.lower()]
                     if name_columns:
                         source_fields = name_columns
                         logger.debug(f"Found name columns: {name_columns}")
                 elif field == 'national_id':
-                    # For national_id, check customer_id and id-related columns
-                    id_columns = [col for col in record.keys() if any(id_term in col.lower() for id_term in ['id', 'customer_id', 'national_id'])]
+                    # For national_id, check customer_id and id-related columns  
+                    id_columns = [col for col in record.keys() if any(id_term in col.lower() for id_term in ['id', 'customer_id', 'national_id']) and 'source_name' not in col.lower()]
                     if id_columns:
                         source_fields = id_columns
                         logger.debug(f"Found ID columns: {id_columns}")
+                elif field == 'dob':
+                    # For dob, check date-related columns
+                    date_columns = [col for col in record.keys() if any(date_term in col.lower() for date_term in ['dob', 'birth', 'date_of_birth'])]
+                    if date_columns:
+                        source_fields = date_columns
+                        logger.debug(f"Found date columns: {date_columns}")
+                elif field == 'email':
+                    # For email, check email-related columns
+                    email_columns = [col for col in record.keys() if 'email' in col.lower()]
+                    if email_columns:
+                        source_fields = email_columns
+                        logger.debug(f"Found email columns: {email_columns}")
+                elif field == 'phone':
+                    # For phone, check phone-related columns
+                    phone_columns = [col for col in record.keys() if any(phone_term in col.lower() for phone_term in ['phone', 'mobile', 'telephone'])]
+                    if phone_columns:
+                        source_fields = phone_columns
+                        logger.debug(f"Found phone columns: {phone_columns}")
+                elif field == 'address':
+                    # For address, check address-related columns
+                    address_columns = [col for col in record.keys() if 'address' in col.lower()]
+                    if address_columns:
+                        source_fields = address_columns
+                        logger.debug(f"Found address columns: {address_columns}")
                 
                 if not source_fields:
                     logger.debug(f"Field {field} not found in record columns: {list(record.keys())}")
                     continue
+            else:
+                # Use the existing valid mapped fields
+                source_fields = existing_source_fields
             
             logger.debug(f"Matching field {field} using source fields: {source_fields}")
             
@@ -603,7 +692,7 @@ class ProfileMatchingAgent:
     
     def load_processed_data(self) -> Dict[str, pd.DataFrame]:
         """
-        Load all processed data files from the output directory.
+        Load all processed data files from the processed_data directory.
         
         Returns:
             Dict[str, pd.DataFrame]: Dictionary mapping source names to DataFrames
@@ -613,9 +702,9 @@ class ProfileMatchingAgent:
         data = {}
         data_dir = Path(self.processed_data_dir)
         
-        # Look for files with _unified suffix
-        for file_path in data_dir.glob("*_unified.csv"):
-            source_name = file_path.stem.replace("_unified", "")
+        # Look for CSV files in processed_data directory  
+        for file_path in data_dir.glob("*.csv"):
+            source_name = file_path.stem
             try:
                 df = pd.read_csv(file_path)
                 logger.info(f"Found file {file_path} with columns: {list(df.columns)}")
@@ -633,7 +722,7 @@ class ProfileMatchingAgent:
                     continue
                 
                 # Log available columns for debugging
-                available_unified_cols = [col for col in UNIFIED_SCHEMA.keys() if col in df.columns]
+                available_unified_cols = [col for col in self.unified_schema.keys() if col in df.columns]
                 logger.info(f"Source {source_name} has unified columns: {available_unified_cols}")
                 
                 data[source_name] = df
@@ -792,15 +881,15 @@ class ProfileMatchingAgent:
         except Exception as e:
             logger.error(f"Failed to save profile: {str(e)}")
     
-    def find_and_merge_profile(self, query: Dict[str, str]) -> Optional[Dict]:
+    def find_and_return_all_matches(self, query: Dict[str, str]) -> Optional[Dict]:
         """
-        Main method to find and merge matching profiles.
+        Enhanced method to find and return all individual matches plus merged profile.
         
         Args:
             query (Dict[str, str]): Search query with anchor attributes
             
         Returns:
-            Optional[Dict]: Merged profile if found, None otherwise
+            Optional[Dict]: Dictionary containing all matches, merged profile, and metadata
         """
         # Load processed data
         data = self.load_processed_data()
@@ -814,10 +903,64 @@ class ProfileMatchingAgent:
             logger.info("No matching profiles found")
             return None
         
-        # Merge matches
+        # Merge matches for the main profile
         merged_profile = self.merge_matches(matches)
+        
+        # Prepare all individual matches for display
+        all_individual_matches = []
+        total_matches = 0
+        
+        for source_name, source_matches in matches.items():
+            for match in source_matches:
+                # Clean up the match record for display
+                clean_match = match.copy()
+                clean_match['source_name'] = source_name
+                
+                # Keep match scoring info
+                match_info = {
+                    'match_score': clean_match.pop('match_score', 0),
+                    'field_scores': clean_match.pop('field_scores', {}),
+                    'is_strong_match': clean_match.pop('is_strong_match', False)
+                }
+                clean_match['match_info'] = match_info
+                
+                all_individual_matches.append(clean_match)
+                total_matches += 1
+        
+        # Sort individual matches by score
+        all_individual_matches.sort(
+            key=lambda x: (x['match_info']['is_strong_match'], x['match_info']['match_score']), 
+            reverse=True
+        )
         
         # Save profile
         self.save_profile(merged_profile, query)
         
-        return merged_profile 
+        # Return comprehensive results
+        return {
+            'merged_profile': merged_profile,
+            'individual_matches': all_individual_matches,
+            'match_summary': {
+                'total_matches': total_matches,
+                'sources_matched': len(matches),
+                'source_breakdown': {source: len(source_matches) for source, source_matches in matches.items()},
+                'has_strong_matches': any(match['match_info']['is_strong_match'] for match in all_individual_matches),
+                'highest_score': max([match['match_info']['match_score'] for match in all_individual_matches]) if all_individual_matches else 0
+            },
+            'query_used': query,
+            'search_timestamp': datetime.now().isoformat()
+        }
+    
+    def find_and_merge_profile(self, query: Dict[str, str]) -> Optional[Dict]:
+        """
+        Original method to find and merge matching profiles (for backward compatibility).
+        
+        Args:
+            query (Dict[str, str]): Search query with anchor attributes
+            
+        Returns:
+            Optional[Dict]: Merged profile if found, None otherwise
+        """
+        # Use the enhanced method and return just the merged profile
+        result = self.find_and_return_all_matches(query)
+        return result['merged_profile'] if result else None 
