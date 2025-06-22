@@ -1,0 +1,487 @@
+/* ProfileCard Component Styles */
+
+.profile-card {
+  background-color: white;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  border: 1px solid #e5e7eb;
+  overflow: hidden;
+  width: 100%;
+  max-width: none;
+}
+
+.profile-card:hover {
+  box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.25);
+  transform: translateY(-2px);
+  transition: all 0.3s ease-in-out;
+}
+
+.profile-card-header {
+  background: linear-gradient(135deg, #401664 0%, #8b5cf6 100%);
+  padding: 24px 32px;
+}
+
+.profile-header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.profile-info {
+  flex: 1;
+}
+
+.profile-icon-section {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.profile-icon {
+  width: 40px;
+  height: 40px;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 16px;
+}
+
+.profile-icon svg {
+  width: 20px;
+  height: 20px;
+  color: white;
+}
+
+.profile-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: white;
+  margin: 0;
+}
+
+.profile-subtitle {
+  color: #e9d5ff;
+  font-size: 18px;
+  margin: 0;
+}
+
+.profile-score-section {
+  text-align: right;
+}
+
+.score-display {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.score-bar-large {
+  width: 96px;
+  height: 16px;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.score-fill-large {
+  height: 100%;
+  border-radius: 8px;
+  transition: width 0.3s ease-in-out;
+}
+
+.score-fill-large.excellent {
+  background-color: #16a34a;
+}
+
+.score-fill-large.good {
+  background-color: #eab308;
+}
+
+.score-fill-large.fair {
+  background-color: #f97316;
+}
+
+.score-fill-large.poor {
+  background-color: #dc2626;
+}
+
+.score-percentage {
+  color: white;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.score-confidence-text {
+  color: #e9d5ff;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.strong-match-banner {
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  border-left: 4px solid #16a34a;
+  padding: 24px;
+}
+
+.strong-match-content {
+  display: flex;
+  align-items: center;
+}
+
+.strong-match-icon {
+  width: 32px;
+  height: 32px;
+  background-color: #16a34a;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 16px;
+  flex-shrink: 0;
+}
+
+.strong-match-icon svg {
+  width: 16px;
+  height: 16px;
+  color: white;
+}
+
+.strong-match-text {
+  color: #166534;
+  font-weight: 500;
+}
+
+.profile-details {
+  padding: 32px;
+}
+
+.profile-fields-list {
+  border-top: 1px solid #f3f4f6;
+}
+
+.profile-field-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 16px 0;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.profile-field-item:last-child {
+  border-bottom: none;
+}
+
+.field-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  min-width: 120px;
+}
+
+.field-value {
+  font-size: 16px;
+  color: #111827;
+  font-weight: 500;
+  text-align: right;
+  flex: 1;
+}
+
+.field-value.empty {
+  color: #9ca3af;
+  font-style: italic;
+}
+
+.field-value.email {
+  color: #2563eb;
+}
+
+.field-value.phone {
+  font-family: 'Courier New', monospace;
+}
+
+.field-value.date {
+  font-family: 'Courier New', monospace;
+}
+
+.profile-sources-section {
+  background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+  padding: 24px 32px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.sources-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.sources-icon {
+  width: 24px;
+  height: 24px;
+  background-color: #401664;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+}
+
+.sources-icon svg {
+  width: 12px;
+  height: 12px;
+  color: white;
+}
+
+.sources-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+.sources-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.source-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 16px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  background: linear-gradient(135deg, #401664 0%, #8b5cf6 100%);
+  color: white;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+.source-tag svg {
+  width: 12px;
+  height: 12px;
+  margin-right: 8px;
+}
+
+.sources-metadata {
+  margin-top: 12px;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.sources-metadata p {
+  margin: 2px 0;
+}
+
+.field-scores-section {
+  background-color: #f9fafb;
+  padding: 20px 24px;
+  border-top: 1px solid #e5e7eb;
+  margin-top: 4px;
+}
+
+.field-scores-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+  margin: 0 0 16px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.field-scores-title::before {
+  content: "📊";
+  font-size: 18px;
+}
+
+.field-scores-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+}
+
+.field-score-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background-color: white;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.field-score-item:hover {
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
+  transition: all 0.2s ease-in-out;
+}
+
+.field-score-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+  text-transform: capitalize;
+  flex: 1;
+}
+
+.field-score-value {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.field-score-bar {
+  width: 80px;
+  height: 10px;
+  background-color: #e5e7eb;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: inset 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.field-score-fill {
+  height: 100%;
+  border-radius: 6px;
+  transition: width 0.3s ease-in-out;
+}
+
+.field-score-fill.excellent {
+  background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%);
+}
+
+.field-score-fill.good {
+  background: linear-gradient(135deg, #0ea5e9 0%, #3b82f6 100%);
+}
+
+.field-score-fill.fair {
+  background: linear-gradient(135deg, #eab308 0%, #f59e0b 100%);
+}
+
+.field-score-fill.poor {
+  background: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
+}
+
+.field-score-number {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+  min-width: 40px;
+  text-align: right;
+}
+
+@media (max-width: 768px) {
+  .profile-card {
+    border-radius: 12px;
+  }
+
+  .profile-card-header {
+    padding: 20px 24px;
+  }
+
+  .profile-header-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .profile-score-section {
+    align-self: stretch;
+  }
+
+  .profile-details {
+    padding: 24px;
+  }
+
+  .field-scores-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sources-tags {
+    gap: 8px;
+  }
+}
+
+/* SVG Icon Styles for ProfileCard */
+.profile-card svg {
+  flex-shrink: 0;
+}
+
+.profile-header svg,
+.profile-icon svg {
+  width: 24px;
+  height: 24px;
+  color: #401664;
+}
+
+.confidence-badge svg,
+.source-item svg {
+  width: 16px;
+  height: 16px;
+}
+
+.confidence-badge.high svg {
+  color: #10b981;
+}
+
+.confidence-badge.medium svg {
+  color: #f59e0b;
+}
+
+.confidence-badge.low svg {
+  color: #ef4444;
+}
+
+.source-item svg {
+  color: #6b7280;
+  margin-right: 6px;
+}
+
+.profile-metadata svg {
+  width: 14px;
+  height: 14px;
+  color: #9ca3af;
+  margin-right: 4px;
+}
+
+.match-quality-item svg {
+  width: 16px;
+  height: 16px;
+  margin-right: 8px;
+}
+
+.field-item svg {
+  width: 14px;
+  height: 14px;
+  color: #6b7280;
+  margin-right: 6px;
+}
+
+/* Icon positioning and states */
+svg[fill="currentColor"] {
+  color: inherit;
+}
+
+svg[stroke="currentColor"] {
+  color: inherit;
+  fill: none;
+  stroke: currentColor;
+}
+
+/* Interactive icons */
+.profile-card button svg {
+  width: 16px;
+  height: 16px;
+  margin-right: 6px;
+  transition: transform 0.2s ease-in-out;
+}
+
+.profile-card button:hover svg {
+  transform: scale(1.05);
+} 

@@ -4,6 +4,7 @@
 
 import React, { useState, useEffect } from "react";
 import { getTestData } from "../services/api";
+import "./QueryForm.css";
 
 const QueryForm = ({ onSubmit, loading }) => {
   const [formData, setFormData] = useState({
@@ -91,15 +92,10 @@ const QueryForm = ({ onSubmit, loading }) => {
   };
 
   return (
-    <div className="bg-white shadow-lg rounded-xl border border-gray-200 p-8">
-      <div className="flex items-center mb-8">
-        <div className="w-10 h-10 bg-gradient-to-br from-[#401664] to-purple-600 rounded-xl flex items-center justify-center mr-4">
-          <svg
-            className="w-5 h-5 text-white"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
+    <div className="query-form-container">
+      <div className="query-form-header">
+        <div className="query-form-icon">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -108,18 +104,13 @@ const QueryForm = ({ onSubmit, loading }) => {
             />
           </svg>
         </div>
-        <h2 className="text-2xl font-bold text-gray-900">
-          Customer Profile Search
-        </h2>
+        <h2 className="query-form-title">Customer Profile Search</h2>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="query-form">
         {/* Full Name Field */}
-        <div>
-          <label
-            htmlFor="full_name"
-            className="block text-sm font-medium text-gray-700 mb-2"
-          >
+        <div className="form-field">
+          <label htmlFor="full_name" className="form-label">
             Full Name *
           </label>
           <input
@@ -128,25 +119,16 @@ const QueryForm = ({ onSubmit, loading }) => {
             name="full_name"
             value={formData.full_name}
             onChange={handleInputChange}
-            className={`w-full px-4 py-3 border-2 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-[#401664] focus:border-[#401664] transition-all duration-200 ${
-              errors.full_name
-                ? "border-red-500"
-                : "border-gray-300 hover:border-gray-400"
-            }`}
+            className={`form-input ${errors.full_name ? "error" : ""}`}
             placeholder="Enter customer's full name"
             disabled={loading}
           />
-          {errors.full_name && (
-            <p className="mt-1 text-sm text-red-600">{errors.full_name}</p>
-          )}
+          {errors.full_name && <p className="form-error">{errors.full_name}</p>}
         </div>
 
         {/* Date of Birth Field */}
-        <div>
-          <label
-            htmlFor="dob"
-            className="block text-sm font-medium text-gray-700 mb-2"
-          >
+        <div className="form-field">
+          <label htmlFor="dob" className="form-label">
             Date of Birth
           </label>
           <input
@@ -155,27 +137,18 @@ const QueryForm = ({ onSubmit, loading }) => {
             name="dob"
             value={formData.dob}
             onChange={handleInputChange}
-            className={`w-full px-4 py-3 border-2 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-[#401664] focus:border-[#401664] transition-all duration-200 ${
-              errors.dob
-                ? "border-red-500"
-                : "border-gray-300 hover:border-gray-400"
-            }`}
+            className={`form-input ${errors.dob ? "error" : ""}`}
             disabled={loading}
           />
-          {errors.dob && (
-            <p className="mt-1 text-sm text-red-600">{errors.dob}</p>
-          )}
-          <p className="mt-1 text-sm text-gray-500">
+          {errors.dob && <p className="form-error">{errors.dob}</p>}
+          <p className="form-help-text">
             Optional - helps improve matching accuracy
           </p>
         </div>
 
         {/* National ID Field */}
-        <div>
-          <label
-            htmlFor="national_id"
-            className="block text-sm font-medium text-gray-700 mb-2"
-          >
+        <div className="form-field">
+          <label htmlFor="national_id" className="form-label">
             National ID
           </label>
           <input
@@ -184,39 +157,24 @@ const QueryForm = ({ onSubmit, loading }) => {
             name="national_id"
             value={formData.national_id}
             onChange={handleInputChange}
-            className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-[#401664] focus:border-[#401664] hover:border-gray-400 transition-all duration-200"
+            className="form-input"
             placeholder="Enter national ID or passport number"
             disabled={loading}
           />
-          <p className="mt-1 text-sm text-gray-500">
-            Optional - any government-issued ID
-          </p>
+          <p className="form-help-text">Optional - any government-issued ID</p>
         </div>
 
         {/* Action Buttons */}
-        <div className="flex space-x-4">
-          <button
-            type="submit"
-            disabled={loading}
-            className={`flex-1 py-4 px-6 rounded-xl text-white font-semibold text-lg shadow-lg transform transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#401664] focus:ring-offset-2 ${
-              loading
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-gradient-to-r from-[#401664] to-purple-600 hover:from-[#4a1a75] hover:to-purple-700 hover:scale-[1.02] active:scale-[0.98]"
-            }`}
-          >
+        <div className="form-actions">
+          <button type="submit" disabled={loading} className="btn btn-primary">
             {loading ? (
-              <div className="flex items-center justify-center">
-                <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent mr-3"></div>
+              <>
+                <div className="loading-spinner"></div>
                 Searching...
-              </div>
+              </>
             ) : (
-              <div className="flex items-center justify-center">
-                <svg
-                  className="w-5 h-5 mr-2"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
+              <>
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -225,7 +183,7 @@ const QueryForm = ({ onSubmit, loading }) => {
                   />
                 </svg>
                 Search Profile
-              </div>
+              </>
             )}
           </button>
 
@@ -233,7 +191,7 @@ const QueryForm = ({ onSubmit, loading }) => {
             type="button"
             onClick={handleClear}
             disabled={loading}
-            className="px-6 py-4 border-2 border-gray-300 rounded-xl text-gray-700 bg-white hover:bg-gray-50 hover:border-[#401664] focus:outline-none focus:ring-2 focus:ring-[#401664] focus:ring-offset-2 disabled:opacity-50 font-medium transition-all duration-200"
+            className="btn btn-secondary"
           >
             Clear
           </button>
@@ -242,63 +200,34 @@ const QueryForm = ({ onSubmit, loading }) => {
 
       {/* Test Cases */}
       {testCases.length > 0 && (
-        <div className="mt-10 pt-8 border-t border-gray-200">
-          <div className="flex items-center mb-6">
-            <div className="w-6 h-6 bg-gradient-to-br from-[#401664] to-purple-600 rounded-lg flex items-center justify-center mr-3">
-              <svg
-                className="w-3 h-3 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M13 10V3L4 14h7v7l9-11h-7z"
-                />
-              </svg>
-            </div>
-            <h3 className="text-lg font-semibold text-gray-900">
-              Quick Test Cases
-            </h3>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="test-cases-section">
+          <h3 className="test-cases-title">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M13 10V3L4 14h7v7l9-11h-7z"
+              />
+            </svg>
+            Quick Test Cases
+          </h3>
+          <div className="test-cases-grid">
             {testCases.map((testCase, index) => (
               <button
                 key={index}
                 onClick={() => handleTestCaseClick(testCase)}
                 disabled={loading}
-                className="p-4 text-left border-2 border-gray-200 rounded-xl hover:border-[#401664] hover:bg-gradient-to-r hover:from-[#401664]/5 hover:to-purple-50 focus:outline-none focus:ring-2 focus:ring-[#401664] focus:border-[#401664] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-[1.02]"
+                className="test-case-button"
               >
-                <div className="font-semibold text-gray-900 mb-2">
-                  {testCase.full_name}
-                </div>
-                <div className="text-sm text-gray-600 mb-1">
-                  DOB: {testCase.dob}
-                </div>
-                <div className="text-sm text-gray-600">
+                <div className="test-case-name">{testCase.full_name}</div>
+                <div className="test-case-details">DOB: {testCase.dob}</div>
+                <div className="test-case-details">
                   ID: {testCase.national_id}
                 </div>
               </button>
             ))}
           </div>
-          <p className="mt-4 text-sm text-gray-500 flex items-center">
-            <svg
-              className="w-4 h-4 mr-2 text-[#401664]"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.121 2.122"
-              />
-            </svg>
-            Click any test case to populate the form
-          </p>
         </div>
       )}
     </div>

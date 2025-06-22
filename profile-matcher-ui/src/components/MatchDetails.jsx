@@ -2,14 +2,34 @@
  * MatchDetails Component - Display detailed matching information and metadata
  */
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import "./MatchDetails.css";
 
-const MatchDetails = ({ metadata, query, matchSummary }) => {
+const MatchDetails = ({ match, onClose }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
-  if (!metadata) {
+  // Handle escape key to close modal
+  useEffect(() => {
+    const handleEscape = (event) => {
+      if (event.key === "Escape") {
+        onClose();
+      }
+    };
+
+    document.addEventListener("keydown", handleEscape);
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [onClose]);
+
+  if (!match) {
     return null;
   }
+
+  // Extract data from the match object
+  const metadata = match.match_info || {};
+  const query = null; // Query info not available in individual match
+  const matchSummary = null; // Match summary not available for individual match
 
   const formatTimestamp = (timestamp) => {
     if (!timestamp) return "N/A";
@@ -18,38 +38,22 @@ const MatchDetails = ({ metadata, query, matchSummary }) => {
 
   const getMatchQualityBadge = (isStrong, score) => {
     if (isStrong) {
-      return (
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-          Strong Match
-        </span>
-      );
+      return <span className="match-score excellent">Strong Match</span>;
     } else if (score >= 70) {
-      return (
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-          Good Match
-        </span>
-      );
+      return <span className="match-score good">Good Match</span>;
     } else if (score >= 50) {
-      return (
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
-          Fair Match
-        </span>
-      );
+      return <span className="match-score fair">Fair Match</span>;
     } else {
-      return (
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-          Weak Match
-        </span>
-      );
+      return <span className="match-score poor">Weak Match</span>;
     }
   };
 
-  const renderQueryInfo = () => (
-    <div className="bg-gradient-to-r from-[#401664]/5 to-purple-50 border border-[#401664]/20 rounded-xl p-6">
-      <div className="flex items-center mb-4">
-        <div className="w-6 h-6 bg-[#401664] rounded-lg flex items-center justify-center mr-3">
+  const renderMatchInfo = () => (
+    <div className="match-summary">
+      <div className="summary-header">
+        <h4 className="section-title">
           <svg
-            className="w-3 h-3 text-white"
+            className="section-icon"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -58,75 +62,98 @@ const MatchDetails = ({ metadata, query, matchSummary }) => {
               strokeLinecap="round"
               strokeLinejoin="round"
               strokeWidth={2}
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
             />
           </svg>
-        </div>
-        <h4 className="text-lg font-semibold text-[#401664]">Search Query</h4>
+          Profile Information
+        </h4>
       </div>
-      <dl className="grid grid-cols-1 gap-3">
-        {Object.entries(query || {}).map(([key, value]) => (
-          <div key={key} className="flex justify-between items-center">
-            <dt className="text-sm text-gray-700 capitalize font-medium">
-              {key.replace(/_/g, " ")}:
-            </dt>
-            <dd className="text-sm text-[#401664] font-semibold bg-white px-3 py-1 rounded-lg">
-              {value}
-            </dd>
+
+      <div className="match-fields">
+        {match.full_name && (
+          <div className="match-field">
+            <span className="field-label">Full Name:</span>
+            <span className="field-value">{match.full_name}</span>
           </div>
-        ))}
-      </dl>
+        )}
+        {match.dob && (
+          <div className="match-field">
+            <span className="field-label">Date of Birth:</span>
+            <span className="field-value">{match.dob}</span>
+          </div>
+        )}
+        {match.email && (
+          <div className="match-field">
+            <span className="field-label">Email:</span>
+            <span className="field-value email">{match.email}</span>
+          </div>
+        )}
+        {match.customer_id && (
+          <div className="match-field">
+            <span className="field-label">Customer ID:</span>
+            <span className="field-value">{match.customer_id}</span>
+          </div>
+        )}
+        {match.source_name && (
+          <div className="match-field">
+            <span className="field-label">Data Source:</span>
+            <span className="field-value">
+              {match.source_name
+                .replace(/_/g, " ")
+                .replace(/\b\w/g, (l) => l.toUpperCase())}
+            </span>
+          </div>
+        )}
+      </div>
     </div>
   );
 
   const renderMatchQuality = () => {
-    const matchQuality = metadata.match_quality || {};
-    const overallScore = matchQuality.overall_score || 0;
+    const matchQuality = metadata;
+    const overallScore = matchQuality.match_score || 0;
     const isStrongMatch = matchQuality.is_strong_match || false;
     const fieldScores = matchQuality.field_scores || {};
 
     return (
-      <div className="bg-gray-50 rounded-lg p-4">
-        <div className="flex items-center justify-between mb-3">
-          <h4 className="text-sm font-medium text-gray-900">Match Quality</h4>
+      <div className="field-scores-section">
+        <div className="match-header">
+          <h4 className="field-scores-title">Match Quality</h4>
           {getMatchQualityBadge(isStrongMatch, overallScore)}
         </div>
 
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-600">Overall Score</span>
-            <div className="flex items-center space-x-2">
-              <div className="w-20 bg-gray-200 rounded-full h-2">
+        <div className="field-scores-grid">
+          <div className="field-score-item">
+            <span className="field-score-name">Overall Score</span>
+            <div className="field-score-value">
+              <div className="field-score-bar">
                 <div
-                  className={`h-2 rounded-full ${
+                  className={`field-score-fill ${
                     overallScore >= 90
-                      ? "bg-green-500"
+                      ? "excellent"
                       : overallScore >= 70
-                      ? "bg-yellow-500"
+                      ? "good"
                       : overallScore >= 50
-                      ? "bg-orange-500"
-                      : "bg-red-500"
+                      ? "fair"
+                      : "poor"
                   }`}
                   style={{ width: `${Math.min(overallScore, 100)}%` }}
                 ></div>
               </div>
-              <span className="text-sm font-medium text-gray-900">
+              <span className="field-score-number">
                 {Math.round(overallScore)}%
               </span>
             </div>
           </div>
 
           {Object.keys(fieldScores).length > 0 && (
-            <div>
+            <div className="field-scores-expandable">
               <button
                 onClick={() => setIsExpanded(!isExpanded)}
-                className="flex items-center justify-between w-full text-left"
+                className="expand-button"
               >
-                <span className="text-sm text-gray-600">Field Scores</span>
+                <span className="field-score-name">Field Scores</span>
                 <svg
-                  className={`w-4 h-4 text-gray-400 transform transition-transform ${
-                    isExpanded ? "rotate-180" : ""
-                  }`}
+                  className={`expand-icon ${isExpanded ? "expanded" : ""}`}
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -141,31 +168,28 @@ const MatchDetails = ({ metadata, query, matchSummary }) => {
               </button>
 
               {isExpanded && (
-                <div className="mt-2 space-y-2">
+                <div className="field-scores-details">
                   {Object.entries(fieldScores).map(([field, score]) => (
-                    <div
-                      key={field}
-                      className="flex items-center justify-between pl-4"
-                    >
-                      <span className="text-xs text-gray-500 capitalize">
+                    <div key={field} className="field-score-item">
+                      <span className="field-score-name">
                         {field.replace(/_/g, " ")}
                       </span>
-                      <div className="flex items-center space-x-2">
-                        <div className="w-16 bg-gray-200 rounded-full h-1.5">
+                      <div className="field-score-value">
+                        <div className="field-score-bar">
                           <div
-                            className={`h-1.5 rounded-full ${
+                            className={`field-score-fill ${
                               score >= 90
-                                ? "bg-green-500"
+                                ? "excellent"
                                 : score >= 70
-                                ? "bg-yellow-500"
+                                ? "good"
                                 : score >= 50
-                                ? "bg-orange-500"
-                                : "bg-red-500"
+                                ? "fair"
+                                : "poor"
                             }`}
                             style={{ width: `${Math.min(score, 100)}%` }}
                           ></div>
                         </div>
-                        <span className="text-xs text-gray-500 w-8 text-right">
+                        <span className="field-score-number">
                           {Math.round(score)}%
                         </span>
                       </div>
@@ -180,180 +204,40 @@ const MatchDetails = ({ metadata, query, matchSummary }) => {
     );
   };
 
-  const renderMatchSummary = () => {
-    if (!matchSummary) return null;
-
-    return (
-      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200 p-4">
-        <h4 className="text-sm font-medium text-gray-900 mb-3 flex items-center">
-          <svg
-            className="w-4 h-4 mr-2 text-blue-500"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-            />
-          </svg>
-          Enhanced Match Summary
-        </h4>
-
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-          <div className="text-center">
-            <div className="text-xl font-bold text-blue-600">
-              {matchSummary.total_matches}
-            </div>
-            <div className="text-xs text-gray-600">Total Matches</div>
-          </div>
-          <div className="text-center">
-            <div className="text-xl font-bold text-purple-600">
-              {matchSummary.sources_matched}
-            </div>
-            <div className="text-xs text-gray-600">Sources</div>
-          </div>
-          <div className="text-center">
-            <div className="text-xl font-bold text-green-600">
-              {Math.round(matchSummary.highest_score)}%
-            </div>
-            <div className="text-xs text-gray-600">Best Score</div>
-          </div>
-          <div className="text-center">
-            <div
-              className={`text-xl font-bold ${
-                matchSummary.has_strong_matches
-                  ? "text-green-600"
-                  : "text-orange-600"
-              }`}
-            >
-              {matchSummary.has_strong_matches ? "✓" : "~"}
-            </div>
-            <div className="text-xs text-gray-600">Strong Match</div>
-          </div>
-        </div>
-
-        {matchSummary.source_breakdown &&
-          Object.keys(matchSummary.source_breakdown).length > 0 && (
-            <div>
-              <div className="text-xs font-medium text-gray-700 mb-2">
-                Matches by Source:
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {Object.entries(matchSummary.source_breakdown).map(
-                  ([source, count]) => (
-                    <span
-                      key={source}
-                      className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-white text-gray-700 border border-gray-300"
-                    >
-                      {source
-                        .replace(/_/g, " ")
-                        .replace(/\b\w/g, (l) => l.toUpperCase())}
-                      : {count}
-                    </span>
-                  )
-                )}
-              </div>
-            </div>
-          )}
-      </div>
-    );
+  // Handle backdrop click
+  const handleBackdropClick = (e) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
   };
 
-  const renderSearchMetadata = () => (
-    <div className="bg-white rounded-lg border border-gray-200 p-4">
-      <h4 className="text-sm font-medium text-gray-900 mb-3">
-        Search Information
-      </h4>
-      <dl className="grid grid-cols-1 gap-2 text-sm">
-        <div className="flex justify-between">
-          <dt className="text-gray-600">Search Time:</dt>
-          <dd className="text-gray-900">
-            {formatTimestamp(metadata.search_timestamp)}
-          </dd>
-        </div>
-        <div className="flex justify-between">
-          <dt className="text-gray-600">Sources Searched:</dt>
-          <dd className="text-gray-900">{metadata.sources_searched || 0}</dd>
-        </div>
-        <div className="flex justify-between">
-          <dt className="text-gray-600">Total Matches:</dt>
-          <dd className="text-gray-900">
-            {matchSummary?.total_matches || metadata.match_count || 0}
-          </dd>
-        </div>
-        {metadata.sources && metadata.sources.length > 0 && (
-          <div>
-            <dt className="text-gray-600 mb-1">Matching Sources:</dt>
-            <dd className="text-gray-900">
-              <div className="flex flex-wrap gap-1">
-                {metadata.sources.map((source, index) => (
-                  <span
-                    key={index}
-                    className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800"
-                  >
-                    {source
-                      .replace(/_/g, " ")
-                      .replace(/\b\w/g, (l) => l.toUpperCase())}
-                  </span>
-                ))}
-              </div>
-            </dd>
-          </div>
-        )}
-      </dl>
-    </div>
-  );
-
   return (
-    <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
-      <div className="flex items-center justify-between mb-8">
-        <div className="flex items-center">
-          <div className="w-8 h-8 bg-gradient-to-br from-[#401664] to-purple-600 rounded-xl flex items-center justify-center mr-4">
-            <svg
-              className="w-4 h-4 text-white"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
+    <div className="modal-backdrop" onClick={handleBackdropClick}>
+      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-header">
+          <h3 className="modal-title">Match Details</h3>
+          <button
+            onClick={onClose}
+            className="modal-close-button"
+            aria-label="Close"
+          >
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth={2}
-                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                d="M6 18L18 6M6 6l12 12"
               />
             </svg>
+          </button>
+        </div>
+
+        <div className="modal-body">
+          <div className="match-details-container">
+            {renderMatchInfo()}
+            {renderMatchQuality()}
           </div>
-          <h3 className="text-2xl font-bold text-gray-900">Match Details</h3>
         </div>
-        <span className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
-          {metadata.sources?.length || 0} source(s) matched
-        </span>
-      </div>
-
-      <div className="space-y-6">
-        {renderMatchSummary()}
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {renderQueryInfo()}
-          {renderMatchQuality()}
-        </div>
-
-        {renderSearchMetadata()}
-
-        {/* Additional Debug Information (only in development) */}
-        {process.env.NODE_ENV === "development" && (
-          <details className="bg-gray-50 rounded-lg p-4">
-            <summary className="text-sm font-medium text-gray-700 cursor-pointer">
-              Debug Information (Development Only)
-            </summary>
-            <pre className="mt-2 text-xs text-gray-600 overflow-auto">
-              {JSON.stringify(metadata, null, 2)}
-            </pre>
-          </details>
-        )}
       </div>
     </div>
   );
