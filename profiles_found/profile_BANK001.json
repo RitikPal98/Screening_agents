@@ -27,18 +27,17 @@
   "last_modified": "",
   "modified_date": "",
   "sources": [
-    "banking_system",
-    "bank_customers_without_schema"
+    "banking_system_unified"
   ],
-  "match_count": 3,
+  "match_count": 2,
   "match_quality": {
     "is_strong_match": true,
-    "overall_score": 86.76470588235294,
+    "overall_score": 82.35294117647058,
     "field_scores": {
       "full_name": 100.0,
       "dob": 100.0,
       "national_id": 25.0
     }
   },
-  "merged_at": "2025-06-18T19:01:05.463666"
+  "merged_at": "2025-06-22T13:35:32.391748"
 }

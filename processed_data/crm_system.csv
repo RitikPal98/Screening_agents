@@ -1,6 +1,0 @@
-customer_id,first_name,last_name,full_name,dob,email,phone,address,national_id,country,source_name,raw_text,sex,record_updated,Gender,Account Type,Account Balance,Registration Date,Male,Savings,91666.17,2020-01-16,last_update,timestamp,gender_code,last_modified,modified_date
-CRM001,John,Doe,John Doe,1985-03-15,john.doe@email.com,+1-555-0101,123 Main St,123456789,US,crm_system,,,,,,,,,,,,,,,,
-CRM002,Jane,Smith,Jane Smith,1992-07-22,jane.smith@email.com,+1-555-0102,456 Oak Ave,987654321,US,crm_system,,,,,,,,,,,,,,,,
-CRM003,Michael,Johnson,Michael Johnson,1978-11-08,michael.j@email.com,+1-555-0103,789 Pine St,456789123,US,crm_system,,,,,,,,,,,,,,,,
-CRM004,Sarah,Williams,Sarah Williams,1989-05-17,sarah.w@email.com,+1-555-0104,321 Elm Dr,321654987,US,crm_system,,,,,,,,,,,,,,,,
-CRM005,Robert,Brown,Robert Brown,1976-09-30,robert.brown@email.com,+1-555-0105,654 Cedar Ln,159753468,US,crm_system,,,,,,,,,,,,,,,,

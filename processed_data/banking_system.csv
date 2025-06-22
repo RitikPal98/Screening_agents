@@ -1,7 +1,0 @@
-customer_id,first_name,last_name,full_name,dob,email,phone,address,national_id,country,source_name,raw_text,sex,record_updated,Gender,Account Type,Account Balance,Registration Date,Male,Savings,91666.17,2020-01-16,last_update,timestamp,gender_code,last_modified,modified_date
-BANK001,Leonardo,DiCaprio,Leonardo DiCaprio,1974-11-11,leonardo.dicaprio@bank.com,+1(555)501-0001,369 Wolf St,667788990,USA,banking_system,,,2023-12-03 08:30:00,,,,,,,,,,,,,
-BANK002,Kate,Winslet,Kate Winslet,1975-10-05,kate.winslet@bank.com,+1(555)501-0002,147 Titanic Ave,778899001,USA,banking_system,,,2023-12-03 10:15:00,,,,,,,,,,,,,
-BANK003,Matthew,McConaughey,Matthew McConaughey,1969-11-04,matthew.mcconaughey@bank.com,+1(555)501-0003,258 Alright Blvd,889900112,USA,banking_system,,,2023-12-03 12:45:00,,,,,,,,,,,,,
-BANK004,Margot,Robbie,Margot Robbie,1990-07-02,margot.robbie@bank.com,+1(555)501-0004,456 Barbie Dr,990011223,USA,banking_system,,,2023-12-03 14:20:00,,,,,,,,,,,,,
-BANK005,Christian,Bale,Christian Bale,1974-01-30,christian.bale@bank.com,+1(555)501-0005,789 Batman Rd,101112334,USA,banking_system,,,2023-12-03 16:00:00 ,,,,,,,,,,,,,
-BANK006,Leo,D,Leo D,1974-11-11,leo.d@bank.com,+1(225)501-0001,269 Wolf D,667788990,UAE,banking_system,,,2024-12-03 09:30:00,,,,,,,,,,,,,

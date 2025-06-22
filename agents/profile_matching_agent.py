@@ -28,7 +28,7 @@ class ProfileMatchingAgent:
     Uses both exact and fuzzy matching to find related records.
     """
     
-    def __init__(self, processed_data_dir: str = "processed_data", 
+    def __init__(self, processed_data_dir: str = "output", 
                  profiles_dir: str = "profiles_found",
                  schema_mappings_dir: str = "schema_mappings"):
         """
@@ -47,35 +47,100 @@ class ProfileMatchingAgent:
         
         # Matching configuration with adjusted weights
         self.MATCH_WEIGHTS = {
-            'national_id': 0.15,   # Slightly higher weight for IDs
-            'full_name': 0.45,     # High weight for names
+            'national_id': 0.20,   # Higher weight for IDs - most reliable
+            'full_name': 0.40,     # High weight for names
             'dob': 0.25,          # Medium weight for dates
             'email': 0.10,        # Medium weight for email
             'phone': 0.05         # Lower weight for phone
         }
         
-        # Adjusted thresholds for different matching scenarios
+        # Much stricter thresholds for different matching scenarios
         self.FUZZY_THRESHOLDS = {
-            'national_id': 60.0,   # Medium threshold for IDs
-            'full_name': 70.0,     # Lower threshold for names
-            'dob': 80.0,          # Medium threshold for dates
-            'email': 85.0,        # High threshold for email
-            'phone': 75.0         # Medium threshold for phone
+            'national_id': 85.0,   # Very high threshold for IDs
+            'full_name': 75.0,     # Lowered for nickname matching
+            'dob': 90.0,          # Very high threshold for dates
+            'email': 95.0,        # Very high threshold for email
+            'phone': 85.0         # Higher threshold for phone
         }
         
-        # Minimum scores for different match types
+        # Much stricter minimum scores for different match types
         self.MIN_SCORES = {
             'exact_id': 100.0,     # Perfect ID match
-            'strong_match': 70.0,   # Strong match on multiple fields
-            'good_match': 60.0,     # Good match on key fields
-            'weak_match': 50.0      # Weak match (might be false positive)
+            'strong_match': 85.0,   # Strong match on multiple fields - much higher
+            'good_match': 75.0,     # Good match on key fields - much higher
+            'weak_match': 65.0      # Weak match threshold raised significantly
         }
         
-        # Name variations and common patterns
+        # Minimum required fields for a valid match
+        self.REQUIRED_MATCH_FIELDS = {
+            'must_have_one': ['national_id', 'full_name'],  # Must have at least one of these
+            'preferred_combination': ['full_name', 'dob']    # Preferred combination for matching
+        }
+        
+        # Comprehensive name variations and nicknames database
         self.NAME_PATTERNS = {
             'suffixes': ['jr', 'sr', 'ii', 'iii', 'iv', 'v'],
             'prefixes': ['mr', 'mrs', 'ms', 'miss', 'dr', 'prof'],
-            'separators': [' ', '-', '.', "'"]
+            'separators': [' ', '-', '.', "'"],
+            'nicknames': {
+                # Full name -> nicknames
+                'leonardo': ['leo', 'leon'],
+                'leonardo dicaprio': ['leo dicaprio', 'leo d', 'leonardo d'],
+                'alexander': ['alex', 'al', 'sandy'],
+                'christopher': ['chris', 'kit'],
+                'elizabeth': ['liz', 'beth', 'betty', 'eliza'],
+                'william': ['will', 'bill', 'billy'],
+                'robert': ['rob', 'bob', 'bobby'],
+                'richard': ['rick', 'dick', 'rich'],
+                'michael': ['mike', 'mick', 'mickey'],
+                'daniel': ['dan', 'danny'],
+                'anthony': ['tony', 'ant'],
+                'matthew': ['matt', 'matty'],
+                'andrew': ['andy', 'drew'],
+                'joseph': ['joe', 'joey'],
+                'jonathan': ['jon', 'johnny'],
+                'benjamin': ['ben', 'benny'],
+                'nicholas': ['nick', 'nicky'],
+                'samuel': ['sam', 'sammy'],
+                'david': ['dave', 'davy'],
+                'thomas': ['tom', 'tommy'],
+                'james': ['jim', 'jimmy', 'jamie'],
+                'john': ['johnny', 'jack'],
+                'patricia': ['pat', 'patty', 'trish'],
+                'jennifer': ['jen', 'jenny'],
+                'linda': ['lin', 'lindy'],
+                'barbara': ['barb', 'barbie'],
+                'susan': ['sue', 'susie'],
+                'jessica': ['jess', 'jessie'],
+                'sarah': ['sara'],
+                'karen': ['kare'],
+                'nancy': ['nan'],
+                'lisa': ['lise'],
+                'betty': ['beth'],
+                'helen': ['nell'],
+                'sandra': ['sandy'],
+                'donna': ['don'],
+                'carol': ['carrie'],
+                'ruth': ['ruthie'],
+                'sharon': ['shari'],
+                'michelle': ['mich', 'mickey'],
+                'laura': ['laurie'],
+                'sarah': ['sally'],
+                'kimberly': ['kim'],
+                'deborah': ['deb', 'debbie'],
+                'dorothy': ['dot', 'dotty'],
+                'lisa': ['liz'],
+                'nancy': ['ann'],
+                'karen': ['kay'],
+                'betty': ['bette'],
+                'helen': ['lena'],
+                'sandra': ['sandi'],
+                'donna': ['dona'],
+                'carol': ['carolina'],
+                'maria': ['mary'],
+                'katherine': ['kate', 'katie', 'kathy', 'kay'],
+                'margaret': ['maggie', 'meg', 'peggy']
+            }
         }
         
         self._ensure_directories()
@@ -298,7 +363,7 @@ class ProfileMatchingAgent:
     
     def _calculate_name_score(self, query_name: str, record_name: str) -> float:
         """
-        Calculate similarity score between two names.
+        Calculate similarity score between two names with nickname and variation support.
         
         Args:
             query_name (str): Query name
@@ -317,23 +382,135 @@ class ProfileMatchingAgent:
         # Try different matching strategies
         scores = []
         
-        # Full string ratio
+        # 1. Direct fuzzy matching
         scores.append(fuzz.ratio(query_name, record_name))
-        
-        # Token sort ratio (handles word order differences)
         scores.append(fuzz.token_sort_ratio(query_name, record_name))
-        
-        # Token set ratio (handles missing/extra words)
         scores.append(fuzz.token_set_ratio(query_name, record_name))
-        
-        # Partial ratio (handles substring matches)
         scores.append(fuzz.partial_ratio(query_name, record_name))
-        
-        # Sequence matcher ratio (handles character-level differences)
         scores.append(SequenceMatcher(None, query_name, record_name).ratio() * 100)
+        
+        # 2. Nickname and variation matching
+        nickname_score = self._calculate_nickname_score(query_name, record_name)
+        if nickname_score > 0:
+            scores.append(nickname_score)
+        
+        # 3. First name + last initial matching (e.g., "Leonardo DiCaprio" vs "Leo D")
+        initial_score = self._calculate_name_initial_score(query_name, record_name)
+        if initial_score > 0:
+            scores.append(initial_score)
+        
+        # 4. Word-level partial matching for compound names
+        word_score = self._calculate_word_level_score(query_name, record_name)
+        if word_score > 0:
+            scores.append(word_score)
         
         # Return the highest score
         return max(scores)
+    
+    def _calculate_nickname_score(self, query_name: str, record_name: str) -> float:
+        """
+        Calculate score based on nickname matching.
+        
+        Args:
+            query_name (str): Query name
+            record_name (str): Record name
+            
+        Returns:
+            float: Nickname similarity score (0-100)
+        """
+        # Check direct nickname matches
+        nicknames = self.NAME_PATTERNS['nicknames']
+        
+        # Check if query matches any nickname of record
+        for full_name, nickname_list in nicknames.items():
+            if full_name in record_name.lower():
+                for nickname in nickname_list:
+                    if nickname in query_name.lower():
+                        return 95.0  # High score for nickname match
+        
+        # Check reverse - if record matches any nickname of query
+        for full_name, nickname_list in nicknames.items():
+            if full_name in query_name.lower():
+                for nickname in nickname_list:
+                    if nickname in record_name.lower():
+                        return 95.0  # High score for nickname match
+        
+        return 0.0
+    
+    def _calculate_name_initial_score(self, query_name: str, record_name: str) -> float:
+        """
+        Calculate score for name + initial matching (e.g., "Leonardo DiCaprio" vs "Leo D").
+        
+        Args:
+            query_name (str): Query name
+            record_name (str): Record name
+            
+        Returns:
+            float: Initial matching score (0-100)
+        """
+        query_words = query_name.split()
+        record_words = record_name.split()
+        
+        if len(query_words) < 2 or len(record_words) < 2:
+            return 0.0
+        
+        # Check if one name has initials
+        def has_initial(words):
+            return any(len(word) == 1 for word in words)
+        
+        if not (has_initial(query_words) or has_initial(record_words)):
+            return 0.0
+        
+        # Try matching first name + last initial
+        if len(query_words) >= 2 and len(record_words) >= 2:
+            # Check first name similarity and last initial
+            first_name_score = max(
+                fuzz.ratio(query_words[0], record_words[0]),
+                self._calculate_nickname_score(query_words[0], record_words[0])
+            )
+            
+            # Check if last names start with same letter
+            last_initial_match = (query_words[-1][0].lower() == record_words[-1][0].lower())
+            
+            if first_name_score >= 80 and last_initial_match:
+                return 90.0  # High score for name + initial match
+        
+        return 0.0
+    
+    def _calculate_word_level_score(self, query_name: str, record_name: str) -> float:
+        """
+        Calculate score based on individual word matching.
+        
+        Args:
+            query_name (str): Query name
+            record_name (str): Record name
+            
+        Returns:
+            float: Word-level similarity score (0-100)
+        """
+        query_words = set(query_name.split())
+        record_words = set(record_name.split())
+        
+        if not query_words or not record_words:
+            return 0.0
+        
+        # Find best matching words
+        word_scores = []
+        for q_word in query_words:
+            best_score = 0
+            for r_word in record_words:
+                score = max(
+                    fuzz.ratio(q_word, r_word),
+                    self._calculate_nickname_score(q_word, r_word)
+                )
+                best_score = max(best_score, score)
+            word_scores.append(best_score)
+        
+        # Return average of best word matches
+        if word_scores:
+            return sum(word_scores) / len(word_scores)
+        
+        return 0.0
     
     def _calculate_date_score(self, query_date: str, record_date: str) -> float:
         """
@@ -656,7 +833,7 @@ class ProfileMatchingAgent:
     
     def _is_strong_match(self, field_scores: Dict[str, float]) -> bool:
         """
-        Determine if the match is strong based on field scores.
+        Determine if the match is strong based on field scores with strict criteria.
         
         Args:
             field_scores (Dict[str, float]): Individual field scores
@@ -664,31 +841,96 @@ class ProfileMatchingAgent:
         Returns:
             bool: True if the match is considered strong
         """
-        # Check if we have both name and date scores
+        # Perfect ID match always qualifies as strong
+        if 'national_id' in field_scores and field_scores['national_id'] == 100.0:
+            return True
+        
+        # Check if we have both name and date scores with very high thresholds
         if 'full_name' in field_scores and 'dob' in field_scores:
             name_score = field_scores['full_name']
             date_score = field_scores['dob']
             
-            # Strong match if both name and date are good
-            if name_score >= 70.0 and date_score >= 80.0:
+            # Strong match requires both name and date to be very high
+            if name_score >= 85.0 and date_score >= 90.0:
                 return True
             
-            # Good match if name is very good and date is good
-            if name_score >= 80.0 and date_score >= 70.0:
+            # Alternative: excellent name with good date
+            if name_score >= 95.0 and date_score >= 80.0:
                 return True
             
-            # Good match if date is excellent and name is acceptable
-            if date_score >= 90.0 and name_score >= 60.0:
-                return True
-            
-            # Strong match if we have high confidence in other fields
-            if 'email' in field_scores and field_scores['email'] >= 90.0:
-                return True
-            
-            if 'phone' in field_scores and field_scores['phone'] >= 90.0:
+            # Alternative: perfect date with very good name
+            if date_score >= 100.0 and name_score >= 80.0:
                 return True
         
+        # Strong match with high-confidence unique identifiers
+        if 'email' in field_scores and field_scores['email'] >= 98.0:
+            # Email match must be combined with at least one other good field
+            if ('full_name' in field_scores and field_scores['full_name'] >= 75.0) or \
+               ('dob' in field_scores and field_scores['dob'] >= 85.0):
+                return True
+        
+        # Strong match with multiple good fields (at least 3 fields with high scores)
+        high_score_count = sum(1 for score in field_scores.values() if score >= 85.0)
+        very_high_score_count = sum(1 for score in field_scores.values() if score >= 95.0)
+        
+        # At least 3 fields with high scores OR 2 fields with very high scores
+        if high_score_count >= 3 or very_high_score_count >= 2:
+            return True
+        
         return False
+    
+    def _meets_minimum_requirements(self, field_scores: Dict[str, float], query: Dict[str, str]) -> bool:
+        """
+        Check if a match meets minimum requirements for acceptance.
+        
+        Args:
+            field_scores (Dict[str, float]): Individual field scores
+            query (Dict[str, str]): Original query to check what fields were provided
+            
+        Returns:
+            bool: True if the match meets minimum requirements
+        """
+        # Must have at least one high-confidence field
+        max_score = max(field_scores.values()) if field_scores else 0
+        if max_score < self.MIN_SCORES['weak_match']:
+            return False
+        
+        # Check if we have at least one of the required fields with good score
+        has_required_field = False
+        for field in self.REQUIRED_MATCH_FIELDS['must_have_one']:
+            if field in field_scores and field_scores[field] >= self.FUZZY_THRESHOLDS[field]:
+                has_required_field = True
+                break
+        
+        if not has_required_field:
+            return False
+        
+        # If query has both name and dob, match should have reasonable scores for both
+        if query.get('full_name') and query.get('dob'):
+            name_score = field_scores.get('full_name', 0)
+            dob_score = field_scores.get('dob', 0)
+            
+            # If we have a perfect date match, be more lenient with name
+            if dob_score >= 100.0 and name_score >= 60.0:
+                return True
+            
+            # If we have a very good name match, be more lenient with date
+            if name_score >= 90.0 and dob_score >= 60.0:
+                return True
+            
+            # Both should be at least moderately good for normal cases
+            if name_score < 65.0 or dob_score < 65.0:
+                return False
+        
+        # Additional validation: reject matches with too many low scores
+        low_score_count = sum(1 for score in field_scores.values() if score < 50.0)
+        total_scores = len(field_scores)
+        
+        # Reject if more than 50% of fields have low scores
+        if total_scores > 0 and low_score_count / total_scores > 0.5:
+            return False
+        
+        return True
     
     def load_processed_data(self) -> Dict[str, pd.DataFrame]:
         """
@@ -745,7 +987,7 @@ class ProfileMatchingAgent:
     
     def find_matches(self, query: Dict[str, str], 
                     data: Dict[str, pd.DataFrame],
-                    fuzzy_threshold: float = 60.0) -> Dict[str, List[Dict]]:
+                    fuzzy_threshold: float = 75.0) -> Dict[str, List[Dict]]:
         """
         Find matching records across all data sources.
         
@@ -780,25 +1022,69 @@ class ProfileMatchingAgent:
                 # Check if this is a strong match based on field scores
                 is_strong_match = self._is_strong_match(field_scores)
                 
-                # Accept the match if:
-                # 1. It's a strong match (high field scores)
-                # 2. It has a good overall score
-                # 3. It has an exact ID match
-                if (is_strong_match or 
-                    match_score >= fuzzy_threshold or 
-                    ('national_id' in field_scores and field_scores['national_id'] == 100.0)):
-                    
+                # Check if the match meets minimum requirements
+                meets_requirements = self._meets_minimum_requirements(field_scores, query)
+                
+                # Much stricter acceptance criteria:
+                # 1. Strong match (very high field scores) - always accept
+                # 2. Perfect ID match - always accept
+                # 3. High overall score AND meets minimum requirements
+                # 4. Good score with at least 2 high-confidence fields
+                accept_match = False
+                
+                if is_strong_match:
+                    accept_match = True
+                    logger.info(f"Accepting strong match in {source_name} with score {match_score}")
+                elif 'national_id' in field_scores and field_scores['national_id'] == 100.0:
+                    accept_match = True
+                    logger.info(f"Accepting perfect ID match in {source_name} with score {match_score}")
+                elif match_score >= self.MIN_SCORES['good_match'] and meets_requirements:
+                    # Additional check: must have at least 2 fields with high confidence
+                    high_confidence_fields = sum(1 for score in field_scores.values() 
+                                                if score >= self.MIN_SCORES['good_match'])
+                    if high_confidence_fields >= 2:
+                        accept_match = True
+                        logger.info(f"Accepting good match in {source_name} with score {match_score} and {high_confidence_fields} high-confidence fields")
+                
+                if accept_match:
                     record['match_score'] = match_score
                     record['field_scores'] = field_scores
                     record['is_strong_match'] = is_strong_match
+                    record['meets_requirements'] = meets_requirements
                     source_matches.append(record)
-                    logger.info(f"Found match in {source_name} with score {match_score}")
+                else:
+                    logger.debug(f"Rejecting match in {source_name} with score {match_score} - does not meet strict criteria")
             
             if source_matches:
-                # Sort matches by score and strong match status
-                source_matches.sort(key=lambda x: (x['is_strong_match'], x['match_score']), reverse=True)
+                # Sort matches by multiple criteria for best quality
+                source_matches.sort(key=lambda x: (
+                    x['is_strong_match'],           # Strong matches first
+                    x['match_score'],               # Then by match score
+                    x.get('meets_requirements', False)  # Then by meeting requirements
+                ), reverse=True)
+                
+                # Limit results per source to prevent overwhelming results
+                # Only keep top 3 matches per source unless there are strong matches
+                strong_matches = [m for m in source_matches if m['is_strong_match']]
+                if len(strong_matches) > 0:
+                    # Keep all strong matches plus top 2 others
+                    max_results = len(strong_matches) + 2
+                else:
+                    # Keep only top 3 results if no strong matches
+                    max_results = 3
+                
+                # Apply the limit
+                source_matches = source_matches[:max_results]
+                
                 matches[source_name] = source_matches
-                logger.info(f"Found {len(source_matches)} matches in {source_name}")
+                logger.info(f"Found {len(source_matches)} high-quality matches in {source_name} "
+                           f"({len(strong_matches)} strong matches)")
+                
+                # Log details of top matches for debugging
+                for i, match in enumerate(source_matches[:2]):
+                    logger.info(f"  Top match {i+1}: score={match['match_score']:.1f}, "
+                               f"strong={match['is_strong_match']}, "
+                               f"fields={list(match['field_scores'].keys())}")
         
         return matches
     
@@ -833,6 +1119,7 @@ class ProfileMatchingAgent:
         merged_profile.pop('match_score', None)
         merged_profile.pop('field_scores', None)
         merged_profile.pop('is_strong_match', None)
+        merged_profile.pop('meets_requirements', None)
         
         # Add source information
         merged_profile['sources'] = list(matches.keys())

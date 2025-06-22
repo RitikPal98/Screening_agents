@@ -1,6 +1,0 @@
-customer_id,first_name,last_name,full_name,dob,email,phone,address,national_id,country,source_name,raw_text,sex,record_updated,Gender,Account Type,Account Balance,Registration Date,Male,Savings,91666.17,2020-01-16,last_update,timestamp,gender_code,last_modified,modified_date
-EC001,Thomas,Anderson,Thomas Anderson,1980-02-28,thomas.anderson@email.com,(555) 301-0001,159 Neo Ave,987123456,United States,ecommerce_platform,,,,,,,,,,,,,,,,
-EC002,Trinity,Moss,Trinity Moss,1986-10-12,trinity.moss@email.com,(555) 301-0002,753 Matrix Blvd,876543210,United States,ecommerce_platform,,,,,,,,,,,,,,,,
-EC003,Morpheus,Fishburne,Morpheus Fishburne,1975-07-05,morpheus.f@email.com,(555) 301-0003,456 Oracle St,765432109,United States,ecommerce_platform,,,,,,,,,,,,,,,,
-EC004,Niobe,Pinkett,Niobe Pinkett,1988-03-19,niobe.pinkett@email.com,(555) 301-0004,321 Zion Dr,654321098,United States,ecommerce_platform,,,,,,,,,,,,,,,,
-EC005,Agent,Smith,Agent Smith,1970-12-01,agent.smith@email.com,(555) 301-0005,999 Program Rd,543210987,United States,ecommerce_platform,,,,,,,,,,,,,,,,

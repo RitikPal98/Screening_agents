@@ -1,6 +1,0 @@
-customer_id,first_name,last_name,full_name,dob,email,phone,address,national_id,country,source_name,raw_text,sex,record_updated,Gender,Account Type,Account Balance,Registration Date,Male,Savings,91666.17,2020-01-16,last_update,timestamp,gender_code,last_modified,modified_date
-,Elizabeth,Turner,Elizabeth Turner,1984-05-20,elizabeth.turner@company.com,555.401.0001,741 Caribbean St,112233445,US,hr_system,,,,,,,,,,,,,,,2023-11-30 12:00:00,
-,William,Sparrow,William Sparrow,1979-11-15,william.sparrow@company.com,555.401.0002,852 Pearl Ave,223344556,US,hr_system,,,,,,,,,,,,,,,2023-11-30 13:30:00,
-,Jack,Bootstrap,Jack Bootstrap,1990-08-07,jack.bootstrap@company.com,555.401.0003,963 Tortuga Rd,334455667,US,hr_system,,,,,,,,,,,,,,,2023-11-30 15:45:00,
-,Barbossa,Hector,Barbossa Hector,1972-04-01,barbossa.hector@company.com,555.401.0004,147 Cursed Dr,445566778,US,hr_system,,,,,,,,,,,,,,,2023-11-30 17:15:00,
-,Angelica,Teach,Angelica Teach,1993-12-12,angelica.teach@company.com,555.401.0005,258 Fountain Ln,556677889,US,hr_system,,,,,,,,,,,,,,,2023-11-30 19:00:00 ,
